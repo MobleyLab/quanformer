@@ -1,8 +1,10 @@
 """
 test_get_psi_results.py
 """
-# local testing vs. travis testing
+# travis vs. local testing (respectively)
 try:
+    import sys
+    sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
     from quanformer.get_psi_results import *
 except ModuleNotFoundError:
     import sys

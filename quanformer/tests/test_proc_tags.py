@@ -1,8 +1,10 @@
 """
 test_proc_tags.py
 """
-# local testing vs. travis testing
+# travis vs. local testing (respectively)
 try:
+    import sys
+    sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
     from quanformer.proc_tags import *
 except ModuleNotFoundError:
     import sys

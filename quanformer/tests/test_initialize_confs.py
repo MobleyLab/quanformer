@@ -1,8 +1,10 @@
 """
 test_smi2confs.py
 """
-# local testing vs. travis testing
+# travis vs. local testing (respectively)
 try:
+    import sys
+    sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
     from quanformer.initialize_confs import *
 except ModuleNotFoundError:
     import sys
