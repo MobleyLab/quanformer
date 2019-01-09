@@ -38,7 +38,7 @@ install:
 
 script:
   - export OE_LICENSE=`pwd`"/oe_license.txt"
-  - pytest -v --cov=quanformer quanformer/tests/
+  - pytest -vs --cov=quanformer quanformer/tests/
 
 notifications:
     email: false
