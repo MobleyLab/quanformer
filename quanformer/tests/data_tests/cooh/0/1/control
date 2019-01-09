@@ -1,0 +1,82 @@
+$cosmo
+  rsolv= 1.30
+$cosmo_atoms
+# radii in Angstrom units
+c  1,3                                                                         \
+   radius=  2.0000
+o  2,4                                                                         \
+   radius=  1.7200
+h  5-8                                                                         \
+   radius=  1.3000
+$cosmo_out file=out.ccf
+$title
+0_1
+$operating system unix
+$symmetry c1
+$redundant    file=coord
+$coord    file=coord
+$intdef    file=coord
+$user-defined bonds    file=coord
+$atoms
+c  1,3                                                                         \
+   basis =c 6-31G*                                                             \
+   jbas  =c 6-31G*
+o  2,4                                                                         \
+   basis =o 6-31G*                                                             \
+   jbas  =o 6-31G*
+h  5-8                                                                         \
+   basis =h 6-31G*                                                             \
+   jbas  =h 6-31G*
+$basis    file=basis
+$rundimensions
+   dim(fock,dens)=2430
+   natoms=8
+   nshell=32
+   nbf(CAO)=68
+   dim(trafo[SAO<-->AO/CAO])=76
+   rhfshells=1
+$scfmo   file=mos
+$closed shells
+ a       1-16                                   ( 2 )
+$scfiterlimit      300
+$scfconv        7
+$thize     0.10000000E-04
+$thime        5
+$scfdamp   start=0.300  step=0.050  min=0.100
+$scfdump
+$scfintunit
+ unit=30       size=0        file=twoint
+$scfdiis
+$maxcor      500
+$scforbitalshift  automatic=.1
+$drvopt
+   cartesian  on
+   basis      off
+   global     off
+   hessian    on
+   dipole     on
+   nuclear polarizability
+$optimize
+   internal   on
+   redundant  on
+   cartesian  off
+   global     off
+   basis      off   logarithm
+$energy    file=energy
+$grad    file=gradient
+$ricore      500
+$rij
+$jbas    file=auxbasis
+$last step     ridft
+$last SCF energy change = 0.23344768E-07
+$charge from ridft
+         -0.000 (not to be modified here)
+$dipole from ridft
+  x    -0.28568196013686    y    -0.91292226322339    z     0.00548095877681    a.u.
+   | dipole | =    2.4314367375  debye
+$optinfo       file=optinfo
+$hessapprox   file=hessapprox
+$orbital_max_rnorm 0.53745801864982E-05
+$subenergy  Etot         E1                  Ej                Ex                 En
+-227.8233603490    -554.2640598448     0.000000000000     0.000000000000     122.4361118576
+$end

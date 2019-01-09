@@ -1,0 +1,19 @@
+memory 15.0 Gb
+molecule s1_1 {
+  0 1
+  C    -0.6759    -0.2455      0.2545
+  C     0.6759     0.2455     -0.2545
+  H    -1.4988     0.2847     -0.2290
+  H    -0.8107    -1.3111      0.0588
+  H    -0.7739    -0.0935      1.3312
+  H     1.4988    -0.2847      0.2290
+  H     0.8107     1.3111     -0.0588
+  H     0.7739     0.0935     -1.3312
+  units angstrom
+}
+
+set basis def2-tzvp
+set freeze_core True
+H, wfn = hessian('mp2', return_wfn=True)
+wfn.hessian().print_out()
+

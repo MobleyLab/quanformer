@@ -1,0 +1,100 @@
+s1
+  -OEChem-10131812413D
+
+  8  7  0     0  0  0  0  0  0999 V2000
+   -0.6759   -0.2455    0.2545 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.6759    0.2455   -0.2545 C   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.4988    0.2847   -0.2290 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -0.8107   -1.3111    0.0588 H   0  0  0  0  0  0  0  0  0  0  0  0
+   -0.7739   -0.0935    1.3312 H   0  0  0  0  0  0  0  0  0  0  0  0
+    1.4988   -0.2847    0.2290 H   0  0  0  0  0  0  0  0  0  0  0  0
+    0.8107    1.3111   -0.0588 H   0  0  0  0  0  0  0  0  0  0  0  0
+    0.7739    0.0935   -1.3312 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  2  1  0  0  0  0
+  1  3  1  0  0  0  0
+  1  4  1  0  0  0  0
+  1  5  1  0  0  0  0
+  2  6  1  0  0  0  0
+  2  7  1  0  0  0  0
+  2  8  1  0  0  0  0
+M  END
+> <MM Szybki Single Point Energy>
+-4.734358587231
+
+> <MM Szybki SD Energy>
+-4.734358587231
+
+> <QM Psi4 Opt. Runtime (sec) mp2/def2-sv(p)>
+17.0
+
+> <QM Psi4 Final Opt. Energy (Har) mp2/def2-sv(p)>
+-79.4163080136395
+
+> <Original omega conformer number>
+1, 1
+
+> <QM Psi4 Opt. Steps mp2/def2-sv(p)>
+3
+
+> <QM Psi4 Initial Opt. Energy (Har) mp2/def2-sv(p)>
+-79.415628927395
+
+> <QM Psi4 Opt. Runtime (sec) b3lyp-d3mbj/def2-tzvp>
+115.0
+
+> <QM Psi4 Final Opt. Energy (Har) b3lyp-d3mbj/def2-tzvp>
+-79.8707111441949
+
+> <QM Psi4 Opt. Steps b3lyp-d3mbj/def2-tzvp>
+3
+
+> <QM Psi4 Initial Opt. Energy (Har) b3lyp-d3mbj/def2-tzvp>
+-79.870189029546
+
+$$$$
+t1
+  -OEChem-10131812413D
+
+  4  3  0     0  0  0  0  0  0999 V2000
+    0.0000    0.0000   -0.5984 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0000    0.0000    0.5984 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0000    0.0001   -1.6610 H   0  0  0  0  0  0  0  0  0  0  0  0
+    0.0000   -0.0001    1.6610 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  2  3  0  0  0  0
+  1  3  1  0  0  0  0
+  2  4  1  0  0  0  0
+M  END
+> <MM Szybki Single Point Energy>
+1.093960331047
+
+> <MM Szybki SD Energy>
+1.089630480125
+
+> <QM Psi4 Opt. Runtime (sec) mp2/def2-sv(p)>
+13.0
+
+> <QM Psi4 Final Opt. Energy (Har) mp2/def2-sv(p)>
+-77.0000670538028
+
+> <Original omega conformer number>
+1, 1
+
+> <QM Psi4 Opt. Steps mp2/def2-sv(p)>
+3
+
+> <QM Psi4 Initial Opt. Energy (Har) mp2/def2-sv(p)>
+-76.998956403228
+
+> <QM Psi4 Opt. Runtime (sec) b3lyp-d3mbj/def2-tzvp>
+57.0
+
+> <QM Psi4 Final Opt. Energy (Har) b3lyp-d3mbj/def2-tzvp>
+-77.3674835733086
+
+> <QM Psi4 Opt. Steps b3lyp-d3mbj/def2-tzvp>
+4
+
+> <QM Psi4 Initial Opt. Energy (Har) b3lyp-d3mbj/def2-tzvp>
+-77.365905641248
+
+$$$$

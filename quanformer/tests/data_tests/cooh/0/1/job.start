@@ -1,0 +1,13 @@
+
+Mon May  1 18:14:23 PDT 2017
+jobex WAS CALLED AS: jobex -ri -c 300
+AN OPTIMIZATION WITH MAX. 300 CYCLES WILL BE PERFORMED
+CONVERGENCY CRITERION FOR TOTAL SCF-ENERGY IS 10**(-6)
+CONVERGENCY CRITERION FOR MAXIMUM NORM OF SCF-ENERGY GRADIENT IS 10**(-3)
+CONVERGENCY CRITERION FOR MAXIMUM NORM OF BASIS SET GRADIENT IS 10**(-3)
+PROCEDURE WILL START WITH A dscf like STEP
+LOAD MODULES WILL BE TAKEN FROM DIRECTORY /beegfs/modfac/apps/TURBOMOLE/7.1_intel/bin/em64t-unknown-linux-gnu
+DSCF  = /beegfs/modfac/apps/TURBOMOLE/7.1_intel/bin/em64t-unknown-linux-gnu/ridft
+GRAD  = /beegfs/modfac/apps/TURBOMOLE/7.1_intel/bin/em64t-unknown-linux-gnu/rdgrad
+STATPT = /beegfs/modfac/apps/TURBOMOLE/7.1_intel/bin/em64t-unknown-linux-gnu/statpt
+
