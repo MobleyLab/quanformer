@@ -1,18 +1,17 @@
 """
 test_get_psi_results.py
 """
+import sys
+import os
 # travis vs. local testing (respectively)
 try:
-    import sys
     sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
     from quanformer.get_psi_results import *
 except ModuleNotFoundError:
-    import sys
     sys.path.insert(0, '/home/limvt/Documents/off_psi4/quanformer')
     from get_psi_results import *
 
 # define location of input files for testing
-import os
 mydir = os.path.dirname(os.path.abspath(__file__))
 
 # -----------------------

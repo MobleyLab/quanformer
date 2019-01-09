@@ -1,18 +1,17 @@
 """
 test_filter_confs.py
 """
+import sys
+import os
 # travis vs. local testing (respectively)
 try:
-    import sys
     sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
     from quanformer.filter_confs import *
 except ModuleNotFoundError:
-    import sys
     sys.path.insert(0, '/home/limvt/Documents/off_psi4/quanformer')
     from filter_confs import *
 
 # define location of input files for testing
-import os
 mydir = os.path.dirname(os.path.abspath(__file__))
 
 # -----------------------
