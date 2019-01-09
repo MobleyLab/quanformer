@@ -1,7 +1,7 @@
 language: python
 
 # Run jobs on container-based infrastructure, can be overridden per job
-dist: xenial
+sudo: false
 
 matrix:
   include:
@@ -25,10 +25,8 @@ before_install:
   - uname -a
   - df -h
   - ulimit -a
-
-    # Install the Python environment
-  - source devtools/travis-ci/before_install.sh
-  - python -V
+  - if [ "$TRAVIS_SECURE_ENV_VARS" == true ]; then openssl aes-256-cbc -K $encrypted_f0234faf2f39_key -iv $encrypted_f0234faf2f39_iv -in oe_license.txt.enc -out oe_license.txt -d; fi
+  - if [ "$TRAVIS_SECURE_ENV_VARS" == false ]; then echo "OpenEye license will not be installed in forks."; fi
 
 install:
     # Pull down a miniconda
@@ -48,12 +46,10 @@ install:
   - source activate test
   - conda install -c openeye openeye-toolkits
 
-    # Create test environment for package
-  - conda create -n test python=$PYTHON_VER pip pytest pytest-cov
-  - conda activate test
-
-    # Install pip only modules
+    # Install anything not in conda
   - pip install codecov
+  - pip install pytest-cov
+  - conda list
 
     # Build and install package
   - conda build --python=$PYTHON_VER devtools/conda-recipe
@@ -61,7 +57,7 @@ install:
 
 
 script:
-  - pytest -v --cov=quanformer quanformer/tests/
+  - pytest -v -s --cov=quanformer quanformer/tests/
 
 global:
   - OE_LICENSE="$HOME/oe_license.txt"
