@@ -1,0 +1,2 @@
+include versioneer.py
+include quanformer/_version.py
