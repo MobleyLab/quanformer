@@ -3,6 +3,7 @@ test_confs_to_psi.py
 """
 import sys
 import os
+import shutil
 # travis vs. local testing (respectively)
 try:
     sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
