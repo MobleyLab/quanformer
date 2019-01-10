@@ -234,7 +234,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     opt = vars(args)
     if not os.path.exists(opt['input']):
-        raise parser.error("Input file %s does not exist." % opt['filename'])
+        parser.error("Input file %s does not exist." % opt['filename'])
 
     # Read input file and store each file's information in two lists.
     sdfList = []
@@ -257,7 +257,7 @@ if __name__ == "__main__":
         if all(list1):
             break
         else:
-            raise parser.error("One or more analysis files are missing!!")
+            parser.error("One or more analysis files are missing!!")
 
     xdict = lambda: defaultdict(xdict)
     rmsdict = xdict()

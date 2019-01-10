@@ -12,8 +12,6 @@ Version:    Nov 30 2018
 
 """
 
-import os
-import sys
 import numpy as np
 import itertools
 import matplotlib.pyplot as plt
@@ -218,7 +216,6 @@ def single_scatter(args):
                     thry_list.append(line.split()[2])
             except IndexError:
                 read_thry_list = False
-                pass
             if "RMS error" in line:
                 rmse = next(itertools.islice(f, 1))
                 rmse = [float(s) for s in rmse.split()[1:]]

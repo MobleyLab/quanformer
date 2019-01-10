@@ -67,7 +67,8 @@ def get_sd_list(mol, datum, Package='Psi4', Method=None, Basisset=None):
 
     try:
         taglabel
-    except UnboundLocalError as e:
+    # "local var referenced before assignment"
+    except UnboundLocalError as e:  # lgtm [py/unreachable-statement]
         sys.exit("Error in input tag of extracting SD data.")
 
     SDList = []

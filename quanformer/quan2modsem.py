@@ -101,7 +101,6 @@ def prep_hess(mol, hessian):
 def quan2modsem(infile, pfile):
 
     hdir, fname = os.path.split(infile)
-    wdir = os.getcwd()
 
     # read in sdf file and distinguish each molecule's conformers
     ifs = oechem.oemolistream()

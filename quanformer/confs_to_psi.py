@@ -10,7 +10,6 @@ Version:    Nov 30 2018
 
 import os, sys
 import openeye.oechem as oechem
-import shutil
 import json
 
 

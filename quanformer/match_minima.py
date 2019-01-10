@@ -209,7 +209,6 @@ def match_minima(sdfList, thryList, *tags):
         return mols
 
     sdfRef = sdfList[0]
-    allIndices = []  # for M mols, N reference minima of each mol, P matching indices for each ref minimia
     moldict = {}  # nested dictionary with 1st layer of mol names, 2nd layer of properties (energies, opt times, etc)
 
     for i, sdfQuery in enumerate(sdfList):
@@ -236,6 +235,7 @@ def match_minima(sdfList, thryList, *tags):
             if name not in moldict: moldict[name] = {}
             for t in tags:
                 if t not in moldict[name]: moldict[name][t] = []
+            # for N reference minima of each mol, P matching indices for each ref minimia
             if 'indices' not in moldict[name]: moldict[name]['indices'] = []
             if 'refNumConfs' not in moldict[name]:
                 moldict[name]['refNumConfs'] = []
@@ -259,7 +259,7 @@ def match_minima(sdfList, thryList, *tags):
                             pt.get_sd_list(qmol, t, 'Psi4', qmethod, qbasis))))
 
             # Skip minmatch if this query file is same as reference file;
-            #    before skip, get data for elists, refNumConfs, allIndices.
+            #    before skip, get data for elists, refNumConfs
             if sdfQuery == sdfRef:
                 print("\nSkipping comparison against self.")
                 moldict[name]['refNumConfs'].append(rmol.NumConfs())
@@ -373,7 +373,6 @@ def calc_rel_ene(minimaE):
     """
 
     zeroes = []
-    mols2del = []
     for i, molist in enumerate(minimaE):  # loop over ith molecule
         refCount = len(molist[0])  # number of confs in ref file
 
@@ -478,7 +477,7 @@ def extract_matches(moldict, *tags):
                 fileData = []
 
                 for j, confNum in enumerate(f):
-                    if confNum == None:
+                    if confNum is None:
                         print(
                             "No matching conformer within 0.5 A RMSD for {}th\
  conf of {} mol in {}th file.".format(j, m, i))

@@ -10,8 +10,7 @@
 
 ## Import and call filter_confs.filter_confs(rmsdfile, tag, rmsdout)
 
-import re
-import os, sys, glob
+import os
 import openeye.oechem as oechem
 
 ### ------------------- Functions -------------------
@@ -48,7 +47,7 @@ def identify_minima(mol, tag, ThresholdE, ThresholdRMSD):
 
     # check if SD tag exists for the case of single conformer
     if mol.NumConfs() == 1:
-        testmol = mol.GetConfs().next()
+        mol.GetConfs().next()
         for x in oechem.OEGetSDDataPairs(mol):
             if tag.lower() in x.GetTag().lower():
                 return True

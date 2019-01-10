@@ -14,8 +14,7 @@ NOTE:       Psi4 results are obtained by parsing output text file.
 
 """
 
-import re
-import os, sys, glob
+import os, sys
 import pickle
 import openeye.oechem as oechem
 
@@ -227,10 +226,12 @@ def process_psi_out(filename, properties, calctype='opt'):
             if "=hessian(" in ''.join(line.split()):  # rm spaces around eql
                 properties['method'] = line.split('\'')[1]
             if "## Hessian" in line:
-                line = next(it)  # "Irrep:"
-                line = next(it)  # blank line
-                line = next(it)  # column index labels
-                line = next(it)  # blank line
+                for i in range(4):
+                    next(it)
+                # (1) "Irrep:"
+                # (2) blank line
+                # (3) column index labels
+                # (4) blank line
 
                 # convert the rest of file/iterator to list
                 rough = list(it)
@@ -289,9 +290,11 @@ def process_psi_out(filename, properties, calctype='opt'):
             properties['initEnergy'] = float(line.split()[1])
         if "Final energy" in line:
             properties['finalEnergy'] = float(line.split()[3])
-            line = next(it)  # "Final (previous) structure:"
-            line = next(it)  # "Cartesian Geometry (in Angstrom)"
-            line = next(it)  # Start of optimized geometry
+            for i in range(3):
+                line = next(it)
+                # (1) "Final (previous) structure:"
+                # (2) "Cartesian Geometry (in Angstrom)"
+                # (3) Start of optimized geometry
             while "Saving final" not in line:
                 rough.append(line.split()[1:4])
                 line = next(it)

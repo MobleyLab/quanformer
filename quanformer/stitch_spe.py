@@ -171,7 +171,6 @@ def extract_enes(dict1):
 
     mols1, tag1 = read_mols_tag(dict1['fname'], dict1['calctype'])
     titleMols = []
-    rmsds = []
     confNums = []
     compEnes = []
     confNans = []
@@ -627,7 +626,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     if not os.path.exists(args.infile):
-        raise parser.error("Input file %s does not exist." % args.infile)
+        parser.error("Input file %s does not exist." % args.infile)
 
     # Read input file into an ordered dictionary.
     # http://stackoverflow.com/questions/25924244/creating-2d-dictionary-in-python
