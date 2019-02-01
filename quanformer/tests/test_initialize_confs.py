@@ -3,22 +3,18 @@ test_smi2confs.py
 """
 import sys
 import os
-# travis vs. local testing (respectively)
-try:
-    sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
-    from quanformer.initialize_confs import *
-except ModuleNotFoundError:
-    sys.path.insert(0, '/home/limvt/Documents/off_psi4/quanformer')
-    from initialize_confs import *
+import pytest
 
 # define location of input files for testing
 mydir = os.path.dirname(os.path.abspath(__file__))
 
-# -----------------------
-
-import pytest
+# import functions to aid testing
+sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
 from helper import *
 
+from quanformer.initialize_confs import *
+
+# -----------------------
 
 def test_generate_confs():
     mol = read_mol(os.path.join(mydir, 'data_tests', 'gbi_single.sdf'))
