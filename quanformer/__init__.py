@@ -8,7 +8,11 @@ Quanformer is a Python-based pipeline for generating conformers, preparing quant
 from __future__ import absolute_import
 
 # Add imports here
-from .initialize_confs import *  # lgtm [py/polluting-import]
+from . import confs_to_psi
+from . import filter_confs
+from . import get_psi_results
+from . import initialize_confs
+from . import proc_tags
 
 # Handle versioneer
 from ._version import get_versions
