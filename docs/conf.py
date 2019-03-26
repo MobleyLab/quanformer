@@ -19,9 +19,8 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'Quanformer is a Python-based pipeline for generating conformers, preparing quantum mechanical (QM) calculations, and processing QM results for a set of molecules and their conformers.'
-copyright = ("2019, Victoria T. Lim. Project structure based on the "
-             "Computational Molecular Science Python Cookiecutter version 1.0")
+project = 'Quanformer'
+copyright = ("2019, Victoria T. Lim.")
 author = 'Victoria T. Lim'
 
 # The short X.Y version
