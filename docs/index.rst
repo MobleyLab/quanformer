@@ -3,10 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Quanformer: quantum mechanical analysis of molecular conformers
+quanformer: quantum mechanical analysis of molecular conformers
 =========================================================
 
-Quanformer is a Python-based pipeline for generating conformers, preparing quantum mechanical (QM) calculations, and processing QM results for a set of input molecules. 
+**quanformer** is a Python-based pipeline for generating conformers, preparing quantum mechanical (QM) calculations, and processing QM results for a set of input molecules. 
 
 For each molecule, conformers are generated and optimized using a molecular mechanics force field.
 Input files for QM calculations are then prepared for geometry optimizations, single point energy (SPE) calculations, or Hessian calculations.

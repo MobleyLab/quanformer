@@ -1,4 +1,4 @@
-Quanformer API
+quanformer API
 ====================
 
 coming soon

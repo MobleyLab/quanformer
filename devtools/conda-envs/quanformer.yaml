@@ -1,0 +1,26 @@
+name: quanformer
+channels:
+  - openeye
+  - psi4
+  - conda-forge
+  - omnia
+  - defaults
+dependencies:
+    # Base depends
+  - geometric
+  - matplotlib
+  - matplotlib-base
+  - numpy
+  - openeye-toolkits
+  - python
+  - pip
+  - pyyaml
+  - setuptools
+
+    # Testing
+  - pytest
+  - pytest-cov
+
+    # Pip-only installs
+  - pip:
+    - codecov

@@ -19,7 +19,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'Quanformer'
+project = 'quanformer'
 copyright = ("2019, Victoria T. Lim.")
 author = 'Victoria T. Lim'
 
