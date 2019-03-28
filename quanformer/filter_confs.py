@@ -8,7 +8,7 @@
 ## in order to roughly filter out duplicate minima and keep unique ones.
 ## Filtered conformers for all molecules are written out in SDF file.
 
-## Import and call filter_confs.filter_confs(rmsdfile, tag, rmsdout)
+## Import and call filter_confs.filter_confs(infile, tag, outfile)
 
 import os
 import openeye.oechem as oechem
@@ -126,16 +126,16 @@ def identify_minima(mol, tag, ThresholdE, ThresholdRMSD):
 ### ------------------- Script -------------------
 
 
-def filter_confs(rmsdfile, tag, rmsdout):
+def filter_confs(infile, tag, outfile):
     """
-    Read in OEMols (and each of their conformers) in 'rmsdfile'.
+    Read in OEMols (and each of their conformers) in 'infile'.
     For each molecule:
         rough filter conformers based on energy differences specified by 'tag',
         fine filter conformers based on RMSD values.
 
     Parameters
     ----------
-    rmsdfile : str
+    infile : str
         Name of SDF file with conformers to be filtered
     tag : str
         SD tag name with the energy value to roughly screen conformers before RMSD
@@ -143,7 +143,7 @@ def filter_confs(rmsdfile, tag, rmsdout):
         "similar" is defined by thresE parameter. Examples:
         - "QM Psi4 Final Opt. Energy (Har) mp2/def-sv(p)"
         - "QM Psi4 Final Single Pt. Energy (Har) mp2/def-sv(p)"
-    rmsdout : str
+    outfile : str
         Name of the output file with filtered conformers
 
     """
@@ -151,25 +151,24 @@ def filter_confs(rmsdfile, tag, rmsdout):
     thresE = 5.E-4  # declare confs diff & skip RMSD comparison above this threshold
     thresRMSD = 0.2  # above this threshold (Angstrom), confs are "diff" minima
 
-    wdir, fname = os.path.split(rmsdfile)
+    wdir, fname = os.path.split(infile)
     numConfsF = open(os.path.join(os.getcwd(), "numConfs.txt"), 'a')
     numConfsF.write("\n{}\n".format(tag))
 
     # Open file to be processed.
     rmsd_ifs = oechem.oemolistream()
-    if not rmsd_ifs.open(rmsdfile):
-        oechem.OEThrow.Fatal("Unable to open %s for reading" % rmsdfile)
+    if not rmsd_ifs.open(infile):
+        oechem.OEThrow.Fatal("Unable to open %s for reading" % infile)
     rmsd_ifs.SetConfTest(oechem.OEAbsoluteConfTest())
     rmsd_molecules = rmsd_ifs.GetOEMols()
 
     # Open outstream file.
     rmsd_ofs = oechem.oemolostream()
-    if os.path.exists(rmsdout):
-        print("%s output file already exists in %s. Skip filtering.\n" %
-              (rmsdout, os.getcwd()))
-        return
-    if not rmsd_ofs.open(rmsdout):
-        oechem.OEThrow.Fatal("Unable to open %s for writing" % rmsdout)
+    if os.path.exists(outfile):
+        raise FileExistsError("Output file {} already exists in {}".format(
+            outfile, os.getcwd()))
+    if not rmsd_ofs.open(outfile):
+        oechem.OEThrow.Fatal("Unable to open %s for writing" % outfile)
 
     # Identify minima and write output file.
     for mol in rmsd_molecules:
@@ -182,4 +181,4 @@ def filter_confs(rmsdfile, tag, rmsdout):
     numConfsF.close()
     rmsd_ofs.close()
 
-    print("Done filtering %s to %s.\n" % (fname, rmsdout))
+    print("Done filtering %s to %s.\n" % (fname, outfile))

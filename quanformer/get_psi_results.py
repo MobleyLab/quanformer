@@ -338,11 +338,11 @@ def get_psi_results(origsdf,
 
     Returns
     -------
-    OpenEye OEMol with data in SD tags
+    method: string - QM method from Psi4 calculations
+    basisset: string - QM basis set from Psi4 calculations
 
     None is returned if the function returns early (e.g., if output file
-       already exists) or if there is KeyError from processing last
-       iteration of output file (last conf of last mol).
+       already exists)
 
     """
 
@@ -351,13 +351,13 @@ def get_psi_results(origsdf,
 
     # check that specified calctype is valid
     if calctype not in {'opt', 'spe', 'hess'}:
-        sys.exit("Specify a valid calculation type.")
+        raise ValueError("Specify a valid calculation type.")
 
     # read in sdf file and distinguish each molecule's conformers
     ifs = oechem.oemolistream()
     ifs.SetConfTest(oechem.OEAbsoluteConfTest())
     if not ifs.open(origsdf):
-        sys.exit("Unable to open %s for reading" % origsdf)
+        raise FileNotFoundError("Unable to open %s for reading" % origsdf)
     molecules = ifs.GetOEMols()
 
     # open outstream file
@@ -404,6 +404,8 @@ def get_psi_results(origsdf,
 
             # add data to oemol
             conf = set_conf_data(conf, props, calctype)
+            method = props['method']
+            basisset = props['basis']
 
             # if hessian, append to dict bc does not go to SD tag
             if calctype == 'hess':
@@ -424,10 +426,7 @@ def get_psi_results(origsdf,
     # close file streams
     ifs.close()
     write_ofs.close()
-    try:
-        return props['method'], props['basis']
-    except KeyError:
-        return None, None
+    return method, basisset
 
 
 def getPsiOne(infile,
@@ -454,22 +453,22 @@ def getPsiOne(infile,
 
     Returns
     -------
-    method: string - QM method from Psi4 calculations
-    basisset: string - QM basis set from Psi4 calculations
-
-    None is returned if the function returns early (e.g., if output file
-       already exists)
+    mol: OpenEye OEMol with data in SD tags
+    props: dictionary with summarized data from output file.
+        spe keys:  basis, method, finalEnergy
+        opt keys:  basis, method, numSteps, initEnergy, finalEnergy, coords
+        hess keys: basis, method, hessian
 
     """
     # check that specified calctype is valid
     if calctype not in {'opt', 'spe', 'hess'}:
-        sys.exit("Specify a valid calculation type.")
+        raise ValueError("Specify a valid calculation type.")
 
     # Read in SINGLE MOLECULE .sdf file
     ifs = oechem.oemolistream()
     mol = oechem.OEGraphMol()
     if not ifs.open(infile):
-        sys.exit("Unable to open %s for reading" % origsdf)
+        raise FileNotFoundError("Unable to open %s for reading" % origsdf)
     oechem.OEReadMolecule(ifs, mol)
 
     # Open outstream file.

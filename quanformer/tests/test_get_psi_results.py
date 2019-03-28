@@ -117,15 +117,20 @@ def test_getPsiOne():
     os.remove(outfile)
 
 
-# TODO
-#def test_get_psi_results_none(capsys):
-#    infile = os.path.join(mydir,'data_tests','gbi-200.sdf')
-#    outfile = os.path.join(mydir,'data_tests','gbi-210.sdf')
-#    with pytest.raises(SystemExit):
-#        m, b = get_psi_results(infile, outfile, calctype='blah', psiout="output.dat", timeout="timer.dat")
-#    out, err = capsys.readouterr()
-#    assert err == "Specify a valid calculation type."
-#    print(out, err)
+def test_get_psi_results_exists():
+    infile = os.path.join(mydir,'data_tests','methane_c2p.sdf')
+    try:
+        m, b = get_psi_results(infile, infile, calctype='opt', psiout="output.dat", timeout="timer.dat")
+    except FileExistsError:
+        assert True
+
+def test_get_psi_results_calctype():
+    infile = os.path.join(mydir,'data_tests','methane_c2p.sdf')
+    outfile = os.path.join(mydir,'data_tests','methane_c2p-210.sdf')
+    try:
+        m, b = get_psi_results(infile, outfile, calctype='blah', psiout="output.dat", timeout="timer.dat")
+    except ValueError:
+        assert True
 
 
 def test_get_psi_results_spe():

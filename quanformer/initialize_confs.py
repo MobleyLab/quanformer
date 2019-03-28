@@ -183,10 +183,9 @@ def initialize_confs(smiles, resolve_clash=True, do_opt=True):
     ### Open output file to write molecules.
     ofs = oechem.oemolostream()
     if os.path.exists(sdfout):
-        print(
+        raise FileExistsError(
             "Output .sdf file already exists. Exiting initialize_confs.\n{}\n".format(
                 os.path.abspath(sdfout)))
-        return
     if not ofs.open(sdfout):
         oechem.OEThrow.Fatal("Unable to open %s for writing" % sdfout)
 
