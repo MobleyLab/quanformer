@@ -16,6 +16,7 @@ NOTE:       Psi4 results are obtained by parsing output text file.
 
 import os, sys
 import pickle
+import warnings
 import openeye.oechem as oechem
 
 # local testing vs. travis testing
@@ -488,7 +489,7 @@ def getPsiOne(infile,
     # move on to next conformer
     if props['missing'] or (calctype == 'opt' and not all(
             key in props for key in ['numSteps', 'finalEnergy', 'coords'])):
-        sys.exit(
+        warnings.warn(
             "ERROR reading {}\nEither Psi4 job was incomplete OR wrong calctype specified\n"
             .format(psiout))
 

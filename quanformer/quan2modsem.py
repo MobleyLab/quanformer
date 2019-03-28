@@ -106,7 +106,7 @@ def quan2modsem(infile, pfile):
     ifs = oechem.oemolistream()
     ifs.SetConfTest(oechem.OEAbsoluteConfTest())
     if not ifs.open(infile):
-        sys.exit("Unable to open %s for reading" % infile)
+        raise FileNotFoundError("Unable to open %s for reading" % infile)
     molecules = ifs.GetOEMols()
 
     # open quanformer-generated pickle file with dictionary of hessians
