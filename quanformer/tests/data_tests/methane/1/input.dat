@@ -1,0 +1,18 @@
+molecule methane_1 {
+  0 1
+  C    -0.0001    -0.0000      0.0000
+  H    -0.0567     1.0874     -0.0859
+  H     0.6195    -0.3971     -0.8072
+  H    -1.0043    -0.4236     -0.0696
+  H     0.4416    -0.2666      0.9627
+  units angstrom
+}
+
+set scf_type df
+set guess sad
+set df_basis_mp2 def2-sv_p_-ri
+
+set basis def2-sv(p)
+set freeze_core True
+optimize('mp2')
+

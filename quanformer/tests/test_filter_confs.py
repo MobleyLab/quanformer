@@ -17,21 +17,21 @@ from quanformer.filter_confs import *
 # -----------------------
 
 def test_identify_minima():
-    mols = read_mol(os.path.join(mydir, 'data_tests', 'gbi.sdf'), True)
+    mols = read_mol(os.path.join(mydir, 'data_tests', 'two_alkanes.sdf'), True)
     mol = next(mols)
-    assert mol.NumConfs() == 36
+    assert mol.NumConfs() == 9
     # use same params defined in filter_confs.py script
     assert identify_minima(mol, 'MM Szybki SD Energy', 5.E-4, 0.2) is True
-    assert mol.NumConfs() == 5
+    assert mol.NumConfs() == 3
 
 
 def test_filter_confs():
     filter_confs(
-        os.path.join(mydir, 'data_tests', 'gbi.sdf'), 'MM Szybki SD Energy',
+        os.path.join(mydir, 'data_tests', 'two_alkanes.sdf'), 'MM Szybki SD Energy',
         'output.sdf')
     mols = read_mol(os.path.join(os.getcwd(), 'output.sdf'), True)
     mol = next(mols)
-    assert mol.NumConfs() == 5
+    assert mol.NumConfs() == 3
     os.remove(os.path.join(os.getcwd(), 'output.sdf'))
     os.remove(os.path.join(os.getcwd(), 'numConfs.txt'))
 

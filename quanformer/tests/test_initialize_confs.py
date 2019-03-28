@@ -17,9 +17,9 @@ from quanformer.initialize_confs import *
 # -----------------------
 
 def test_generate_confs():
-    mol = read_mol(os.path.join(mydir, 'data_tests', 'gbi_single.sdf'))
+    mol = read_mol(os.path.join(mydir, 'data_tests', 'steric_clash.smi'))
     mol_with_confs = generate_confs(mol)
-    assert mol_with_confs.NumConfs() == 36
+    assert mol_with_confs.NumConfs() == 5
 
 
 def test_resolve_clashes():
@@ -47,15 +47,15 @@ def test_initialize_confs():
 
 
 def test_initialize_confs_rename():
-    initialize_confs(os.path.join(mydir, 'data_tests', 'gbi_single.sdf'))
-    statinfo = os.stat(os.path.join(mydir, 'gbi_single_quanformer.sdf'))
-    assert statinfo.st_size == 87408
-    os.remove(os.path.join(mydir, 'gbi_single_quanformer.sdf'))
+    initialize_confs(os.path.join(mydir, 'data_tests', 'methane_c2p.sdf'))
+    statinfo = os.stat(os.path.join(mydir, 'methane_c2p_quanformer.sdf'))
+    assert statinfo.st_size == 702
+    os.remove(os.path.join(mydir, 'methane_c2p_quanformer.sdf'))
     os.remove(os.path.join(mydir, 'numConfs.txt'))
 
 
 # test manually without pytest
-if 1:
+if 0:
     test_generate_confs()
     test_resolve_clashes()
     test_quick_opt()

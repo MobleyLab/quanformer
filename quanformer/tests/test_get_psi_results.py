@@ -93,27 +93,27 @@ def test_process_psi_out_two():
 
 
 def test_getPsiOne():
-    infile = os.path.join(mydir, 'data_tests', 'gbi_single.sdf')
-    outfile = os.path.join(mydir, 'data_tests', 'gbi_single-210.sdf')
-    psiout = os.path.join(mydir, 'data_tests', 'GBI', '1', 'output.dat')
-    timeout = os.path.join(mydir, 'data_tests', 'GBI', '1', 'timer.dat')
+    infile = os.path.join(mydir,  'data_tests', 'methane_c2p.sdf')
+    outfile = os.path.join(mydir, 'data_tests', 'methane_c2p-210.sdf')
+    psiout = os.path.join(mydir,  'data_tests', 'methane', '1', 'output.dat')
+    timeout = os.path.join(mydir, 'data_tests', 'methane', '1', 'timer.dat')
     mol, props = getPsiOne(infile, outfile, 'opt', psiout, timeout)
     assert oechem.OEHasSDData(
-        mol, "QM Psi4 Opt. Runtime (sec) mp2/def2-SV(P)") == True
+        mol, "QM Psi4 Opt. Runtime (sec) mp2/def2-sv(p)") == True
     assert oechem.OEGetSDData(
-        mol, "QM Psi4 Opt. Runtime (sec) mp2/def2-SV(P)") == '847.0'
+        mol, "QM Psi4 Opt. Runtime (sec) mp2/def2-sv(p)") == '2.22'
     assert oechem.OEHasSDData(
-        mol, "QM Psi4 Final Opt. Energy (Har) mp2/def2-SV(P)") == True
+        mol, "QM Psi4 Final Opt. Energy (Har) mp2/def2-sv(p)") == True
     assert oechem.OEGetSDData(
-        mol, "QM Psi4 Final Opt. Energy (Har) mp2/def2-SV(P)"
-    ) == '-582.1568394053036'
+        mol, "QM Psi4 Final Opt. Energy (Har) mp2/def2-sv(p)"
+    ) == '-40.2897657783697'
     assert oechem.OEHasSDData(
-        mol, "QM Psi4 Initial Opt. Energy (Har) mp2/def2-SV(P)") == True
+        mol, "QM Psi4 Initial Opt. Energy (Har) mp2/def2-sv(p)") == True
     assert oechem.OEGetSDData(
-        mol, "QM Psi4 Initial Opt. Energy (Har) mp2/def2-SV(P)"
-    ) == '-582.148922080397'
-    assert oechem.OEHasSDData(mol, "QM Psi4 Opt. Steps mp2/def2-SV(P)") == True
-    assert oechem.OEGetSDData(mol, "QM Psi4 Opt. Steps mp2/def2-SV(P)") == '8'
+        mol, "QM Psi4 Initial Opt. Energy (Har) mp2/def2-sv(p)"
+    ) == '-40.289556302848'
+    assert oechem.OEHasSDData(mol, "QM Psi4 Opt. Steps mp2/def2-sv(p)") == True
+    assert oechem.OEGetSDData(mol, "QM Psi4 Opt. Steps mp2/def2-sv(p)") == '3'
     os.remove(outfile)
 
 

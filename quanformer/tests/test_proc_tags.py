@@ -22,7 +22,7 @@ def test_get_sd_list():
 
 
 def test_set_sd_tags_hess():
-    mol = read_mol(os.path.join(mydir, 'data_tests', 'gbi_single.sdf'))
+    mol = read_mol(os.path.join(mydir, 'data_tests', 'methane_c2p.sdf'))
     props = {
         'method': 'test-m',
         'basis': 'test-b',
@@ -37,7 +37,7 @@ def test_set_sd_tags_hess():
 
 
 def test_set_sd_tags_spe_notfinish():
-    mol = read_mol(os.path.join(mydir, 'data_tests', 'gbi_single.sdf'))
+    mol = read_mol(os.path.join(mydir, 'data_tests', 'methane_c2p.sdf'))
     props = {
         'method': 'test-m',
         'basis': 'test-b',
@@ -55,7 +55,7 @@ def test_set_sd_tags_spe_notfinish():
 
 
 def test_set_sd_tags_spe_didfinish():
-    mol = read_mol(os.path.join(mydir, 'data_tests', 'gbi_single.sdf'))
+    mol = read_mol(os.path.join(mydir, 'data_tests', 'methane_c2p.sdf'))
     props = {
         'method': 'test-m',
         'basis': 'test-b',

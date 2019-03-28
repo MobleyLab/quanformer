@@ -1,0 +1,7 @@
+Number of original conformers
+AlkEthOH_c312	9
+AlkEthOH_c1008	3
+
+MM Szybki SD Energy
+AlkEthOH_c312	3
+AlkEthOH_c1008	3
