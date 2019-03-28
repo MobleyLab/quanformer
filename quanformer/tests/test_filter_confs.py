@@ -28,11 +28,11 @@ def test_identify_minima():
 def test_filter_confs():
     filter_confs(
         os.path.join(mydir, 'data_tests', 'two_alkanes_prefilt.sdf'), 'MM Szybki SD Energy',
-        'output.sdf')
-    mols = read_mol(os.path.join(mydir, 'output.sdf'), True)
+        os.path.join(mydir, 'data_tests', 'output.sdf'))
+    mols = read_mol(os.path.join(mydir, 'data_tests', 'output.sdf'), True)
     mol = next(mols)
     assert mol.NumConfs() == 3
-    os.remove(os.path.join(mydir, 'output.sdf'))
+    os.remove(os.path.join(mydir, 'data_tests', 'output.sdf'))
     os.remove(os.path.join(mydir, 'numConfs.txt'))
 
 def test_filter_confs_exists():
