@@ -32,7 +32,7 @@ setup(
     # Comment out this line to prevent the files from being packaged with your software
     # Extend/modify the list to include/exclude other items as need be
     # package_data={'quanformer': ["data/*.dat"]
-                  },
+    #              },
 
     author_email='limvt@uci.edu',
     url='https://quanformer.readthedocs.io/',
