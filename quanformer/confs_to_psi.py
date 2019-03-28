@@ -13,6 +13,10 @@ import openeye.oechem as oechem
 import json
 
 
+def check_calc(calctype):
+    if calctype not in {'opt', 'spe', 'hess'}:
+        raise ValueError("Specify a valid calculation type.")
+
 def make_psi_input(mol, label, method, basisset, calctype='opt', mem=None):
     """
     Get coordinates from input mol, and generate/format input text for
@@ -46,8 +50,7 @@ def make_psi_input(mol, label, method, basisset, calctype='opt', mem=None):
     """
 
     # check that specified calctype is valid
-    if calctype not in {'opt', 'spe', 'hess'}:
-        sys.exit("Specify a valid calculation type.")
+    check_calc(calctype)
 
     inputstring = ""
 
@@ -152,8 +155,7 @@ def make_psi_json(mol, label, method, basisset, calctype='opt', mem=None):
 
     """
     # check that specified calctype is valid
-    if calctype not in {'opt', 'spe', 'hess'}:
-        sys.exit("Specify a valid calculation type.")
+    check_calc(calctype)
 
     inputdict = {}
     moldict = {}
