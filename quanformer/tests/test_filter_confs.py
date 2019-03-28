@@ -33,7 +33,7 @@ def test_filter_confs():
     mol = next(mols)
     assert mol.NumConfs() == 3
     os.remove(os.path.join(mydir, 'data_tests', 'output.sdf'))
-    os.remove(os.path.join(mydir, 'numConfs.txt'))
+    os.remove(os.path.join(os.getcwd(), 'numConfs.txt')) # don't use mydir here
 
 def test_filter_confs_exists():
     try:
