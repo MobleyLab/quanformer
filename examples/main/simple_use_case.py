@@ -1,13 +1,8 @@
 """
 simple_use_case.py
-"""
-import os
+--------------------------
+Final directory structure:
 
-os.system("python ../executor.py -f data_tests/two_alkanes.smi --setup -m 'mp2' -b 'def2-sv(p)'")
-
-# TODO: add checks for these?
-# files that should be created
-"""
 .
 ├── AlkEthOH_c1008
 │   ├── 1
@@ -28,3 +23,8 @@ os.system("python ../executor.py -f data_tests/two_alkanes.smi --setup -m 'mp2' 
 └── two_alkanes.sdf
 
 """
+import quanformer.pipeline as qp
+
+qp.setup_conformers('two_alkanes.smi')
+qp.setup_calculations('two_alkanes-200.sdf','mp2','def2-sv(p)')
+#qf.pipeline.process_results('two_alkanes-200.sdf')

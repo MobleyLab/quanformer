@@ -1,0 +1,102 @@
+Generating and filtering conformers for two_alkanes.smi
+AlkEthOH_c312 1
+Resolving bad clashes...
+Doing a quick MM (SD) optimization...
+AlkEthOH_c312 2
+Resolving bad clashes...
+Doing a quick MM (SD) optimization...
+AlkEthOH_c312 3
+Resolving bad clashes...
+Doing a quick MM (SD) optimization...
+AlkEthOH_c312 4
+Resolving bad clashes...
+Doing a quick MM (SD) optimization...
+AlkEthOH_c312 5
+Resolving bad clashes...
+Doing a quick MM (SD) optimization...
+AlkEthOH_c312 6
+Resolving bad clashes...
+Doing a quick MM (SD) optimization...
+AlkEthOH_c312 7
+Resolving bad clashes...
+Doing a quick MM (SD) optimization...
+AlkEthOH_c312 8
+Resolving bad clashes...
+Doing a quick MM (SD) optimization...
+AlkEthOH_c312 9
+Resolving bad clashes...
+Doing a quick MM (SD) optimization...
+AlkEthOH_c1008 1
+Resolving bad clashes...
+Doing a quick MM (SD) optimization...
+AlkEthOH_c1008 2
+Resolving bad clashes...
+Doing a quick MM (SD) optimization...
+AlkEthOH_c1008 3
+Resolving bad clashes...
+Doing a quick MM (SD) optimization...
+ ~ Reference: AlkEthOH_c312 conformer 1
+Warning: Using automorph=true and heavyOnly=false in OERMSD.
+Warning: In some cases, this can lead to long runtimes due to a large number of automorph matches.
+Warning: Using automorph=true and heavyOnly=false in OERMSD.
+Warning: In some cases, this can lead to long runtimes due to a large number of automorph matches.
+Warning: Using automorph=true and heavyOnly=false in OERMSD.
+Warning: In some cases, this can lead to long runtimes due to a large number of automorph matches.
+Warning: Using automorph=true and heavyOnly=false in OERMSD.
+Warning: In some cases, this can lead to long runtimes due to a large number of automorph matches.
+Warning: Using automorph=true and heavyOnly=false in OERMSD.
+Warning: In some cases, this can lead to long runtimes due to a large number of automorph matches.
+Warning: Using automorph=true and heavyOnly=false in OERMSD.
+Warning: In some cases, this can lead to long runtimes due to a large number of automorph matches.
+ ~ Reference: AlkEthOH_c312 conformer 2
+Warning: Using automorph=true and heavyOnly=false in OERMSD.
+Warning: In some cases, this can lead to long runtimes due to a large number of automorph matches.
+Warning: Using automorph=true and heavyOnly=false in OERMSD.
+Warning: In some cases, this can lead to long runtimes due to a large number of automorph matches.
+Warning: Using automorph=true and heavyOnly=false in OERMSD.
+Warning: In some cases, this can lead to long runtimes due to a large number of automorph matches.
+Warning: Using automorph=true and heavyOnly=false in OERMSD.
+Warning: In some cases, this can lead to long runtimes due to a large number of automorph matches.
+Warning: Using automorph=true and heavyOnly=false in OERMSD.
+Warning: In some cases, this can lead to long runtimes due to a large number of automorph matches.
+ ~ Reference: AlkEthOH_c312 conformer 3
+Warning: Using automorph=true and heavyOnly=false in OERMSD.
+Warning: In some cases, this can lead to long runtimes due to a large number of automorph matches.
+Warning: Using automorph=true and heavyOnly=false in OERMSD.
+Warning: In some cases, this can lead to long runtimes due to a large number of automorph matches.
+Warning: Using automorph=true and heavyOnly=false in OERMSD.
+Warning: In some cases, this can lead to long runtimes due to a large number of automorph matches.
+Warning: Using automorph=true and heavyOnly=false in OERMSD.
+Warning: In some cases, this can lead to long runtimes due to a large number of automorph matches.
+ ~ Reference: AlkEthOH_c312 conformer 4
+Warning: Using automorph=true and heavyOnly=false in OERMSD.
+Warning: In some cases, this can lead to long runtimes due to a large number of automorph matches.
+Warning: Using automorph=true and heavyOnly=false in OERMSD.
+Warning: In some cases, this can lead to long runtimes due to a large number of automorph matches.
+ ~ Reference: AlkEthOH_c312 conformer 5
+Warning: Using automorph=true and heavyOnly=false in OERMSD.
+Warning: In some cases, this can lead to long runtimes due to a large number of automorph matches.
+ ~ Reference: AlkEthOH_c312 conformer 6
+ ~ Reference: AlkEthOH_c312 conformer 7
+ ~ Reference: AlkEthOH_c312 conformer 8
+ ~ Reference: AlkEthOH_c312 conformer 9
+AlkEthOH_c312 original number of conformers: 9
+Removing AlkEthOH_c312 conformer index 1
+Removing AlkEthOH_c312 conformer index 4
+Removing AlkEthOH_c312 conformer index 5
+Removing AlkEthOH_c312 conformer index 6
+Removing AlkEthOH_c312 conformer index 7
+Removing AlkEthOH_c312 conformer index 8
+ ~ Reference: AlkEthOH_c1008 conformer 1
+ ~ Reference: AlkEthOH_c1008 conformer 2
+Warning: Using automorph=true and heavyOnly=false in OERMSD.
+Warning: In some cases, this can lead to long runtimes due to a large number of automorph matches.
+ ~ Reference: AlkEthOH_c1008 conformer 3
+AlkEthOH_c1008 original number of conformers: 3
+Done filtering two_alkanes.sdf to /home/limvt/Documents/quanformer/examples/main/two_alkanes-200.sdf.
+
+
+Creating Psi4 input files for two_alkanes...
+AlkEthOH_c312 3
+AlkEthOH_c1008 3
+
