@@ -23,4 +23,5 @@ This code is open source on `Github <https://github.com/MobleyLab/quanformer>`_.
 
     install
     api
+    utilities
     examples
