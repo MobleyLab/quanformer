@@ -21,7 +21,7 @@ Set up structures and prepare calculations:
 
 Your directory structure should look something like this:
 
-.. code-block:: none
+.. code-block::
     .
     ├── AlkEthOH_c1008
     │   ├── 1
