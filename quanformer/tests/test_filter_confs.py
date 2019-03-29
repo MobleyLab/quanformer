@@ -24,6 +24,24 @@ def test_identify_minima():
     assert identify_minima(mol, 'MM Szybki SD Energy', 5.E-4, 0.2) is True
     assert mol.NumConfs() == 3
 
+def test_identify_minima_fail():
+    mols = read_mol(os.path.join(mydir, 'data_tests', 'two_alkanes_prefilt.sdf'), True)
+    mol = next(mols)
+    assert mol.NumConfs() == 9
+    assert identify_minima(mol, 'blah', 5.E-4, 0.2) is False
+
+def test_identify_minima_one():
+    mols = read_mol(os.path.join(mydir, 'data_tests', 'methane_c2p.sdf'), True)
+    mol = next(mols)
+    assert mol.NumConfs() == 1
+    assert identify_minima(mol, 'MM Szybki SD Energy', 5.E-4, 0.2) is True
+    assert mol.NumConfs() == 1
+
+def test_identify_minima_one_fail():
+    mols = read_mol(os.path.join(mydir, 'data_tests', 'methane_c2p.sdf'), True)
+    mol = next(mols)
+    assert mol.NumConfs() == 1
+    assert identify_minima(mol, 'blah', 5.E-4, 0.2) is False
 
 def test_filter_confs():
     filter_confs(
@@ -42,6 +60,16 @@ def test_filter_confs_exists():
             os.path.join(mydir, 'data_tests', 'two_alkanes_prefilt.sdf'))
     except FileExistsError:
         assert True
+
+def test_filter_confs_unfinished():
+    filter_confs(
+        os.path.join(mydir, 'data_tests', 'gbi_prefilt.sdf'), 'QM Psi4 Final Opt. Energy (Har) mp2/def2-SV(P)',
+        os.path.join(mydir, 'data_tests', 'output.sdf'))
+    mols = read_mol(os.path.join(mydir, 'data_tests', 'output.sdf'), True)
+    mol = next(mols)
+    assert mol.NumConfs() == 1
+    os.remove(os.path.join(mydir, 'data_tests', 'output.sdf'))
+    os.remove(os.path.join(os.getcwd(), 'numConfs.txt')) # don't use mydir here
 
 # test manually without pytest
 if 0:
