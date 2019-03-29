@@ -1,7 +1,7 @@
 Examples
 ========
 
-Example files are provided on `Github <https://github.com/MobleyLab/quanformer/tree/master/examples/main>`.
+Example files are provided on `Github <https://github.com/MobleyLab/quanformer/tree/master/examples/main>`_.
 
 Remember to activate your conda environment containing **quanformer**::
 
@@ -10,7 +10,7 @@ Remember to activate your conda environment containing **quanformer**::
 Basic usage
 -----------
     
-Set up structures and prepare calculations::
+Set up structures and prepare calculations:
 
 .. code-block:: python
 
@@ -39,7 +39,7 @@ Your directory structure should look something like this::
     ├── two_alkanes-200.sdf
     └── two_alkanes.sdf
     
-After running calculations from provided input files, collect results::
+After running calculations from provided input files, collect results:
 
 .. code-block:: python
 

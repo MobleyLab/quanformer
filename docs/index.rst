@@ -6,7 +6,7 @@
 quanformer: quantum mechanical analysis of molecular conformers
 =========================================================
 
-**quanformer** is a Python-based pipeline for generating conformers, preparing quantum mechanical (QM) calculations, and processing QM results for a set of input molecules. 
+`**quanformer** <https://github.com/MobleyLab/quanformer>`_ is a Python-based pipeline for generating conformers, preparing quantum mechanical (QM) calculations, and processing QM results for a set of input molecules. 
 
 For each molecule, conformers are generated and optimized using a molecular mechanics force field.
 Input files for QM calculations are then prepared for geometry optimizations, single point energy (SPE) calculations, or Hessian calculations.
