@@ -27,4 +27,4 @@ import quanformer.pipeline as qp
 
 qp.setup_conformers('two_alkanes.smi')
 qp.setup_calculations('two_alkanes-200.sdf','mp2','def2-sv(p)')
-#qf.pipeline.process_results('two_alkanes-200.sdf')
+#qp.process_results('two_alkanes-200.sdf')
