@@ -21,7 +21,8 @@ Set up structures and prepare calculations:
 
 Your directory structure should look something like this:
 
-.. code-block::
+.. code-block:: text
+
     .
     ├── AlkEthOH_c1008
     │   ├── 1
@@ -46,4 +47,14 @@ After running calculations from provided input files, collect results:
 .. code-block:: python
 
     qp.process_results('two_alkanes-200.sdf')
+
+Utilities
+---------
+
+**quanformer** comes with a number of :ref:`utility functions <utilities>`. These can be used as shown here:
+
+.. code-block:: python
+
+    import quanformer.utils as qu
+    qu.convert_extension('two_alkanes-200.sdf','two_alkanes-200.mol2')
 
