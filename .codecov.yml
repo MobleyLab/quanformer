@@ -13,5 +13,4 @@ comment:
   flags: null
   paths: null
 ignore:
-  - "executor.py" 
-  - "match_plot.py"
+  - "quanformer/match_plot.py"

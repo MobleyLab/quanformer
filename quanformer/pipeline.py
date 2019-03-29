@@ -147,7 +147,13 @@ def process_results(infile, calctype='opt', suffix=[]):
         infile)
 
     # default of pipeline goes '200' --> '210'/'220' --> '221/'222'
-    if len(suffix) == 0:
+    if len(suffix) > 0:
+        out_results = os.path.join(
+            curr_dir, "{}-{}.sdf".format(prefix, suffix[0]))
+        if len(suffix) == 2:
+            out_filter = os.path.join(
+                curr_dir, "{}-{}.sdf".format(prefix, suffix[1]))
+    else:
         if '-200.sdf' in no_path_infile:
             out_results = os.path.join(curr_dir, prefix + '-210.sdf')
             out_filter = os.path.join(curr_dir, prefix + '-220.sdf')
@@ -159,9 +165,7 @@ def process_results(infile, calctype='opt', suffix=[]):
                 "ERROR: Input file does not have usual 200-series "
                 "suffixes (see README).\nPlease specify suffix(es) in a "
                 "list in accordance with documentation.")
-    else:
-        out_results = os.path.join(
-            curr_dir, "{}-{}.sdf".format(prefix, suffix[0]))
+
 
     # get psi4 results
     print("Getting Psi4 results for %s ..." % (checked_infile))
@@ -170,14 +174,12 @@ def process_results(infile, calctype='opt', suffix=[]):
 
     # only filter structures after opts; spe/hess should not change geoms
     if calctype == 'opt' and None not in [method, basisset]:
-        out_filter = os.path.join(
-            curr_dir, "{}-{}.sdf".format(prefix, suffix[1]))
         filter_results(out_results, out_filter, method, basisset)
 
 def filter_results(infile, outfile, method, basisset):
     # may call this function directly to filter and not extract data
 
     tag = "QM Psi4 Final Opt. Energy (Har) %s/%s" % (method, basisset)
-    print("Filtering Psi4 results for %s ..." % (out_results))
+    print("Filtering Psi4 results for %s ..." % (outfile))
     filter_confs.filter_confs(infile, tag, outfile)
 

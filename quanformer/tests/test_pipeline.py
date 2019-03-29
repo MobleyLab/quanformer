@@ -51,6 +51,12 @@ def test_setup_conformers():
     os.remove(os.path.join(mydir, 'two_alkanes-200.sdf'))
     os.remove(os.path.join(mydir, 'numConfs.txt'))
 
+def test_setup_conformers_ext():
+    try:
+        setup_conformers(os.path.join(mydir, 'data_tests', 'methane_c2p.sdf'))
+    except ValueError:
+        assert True
+
 def test_setup_calculations_true():
     setup_calculations(
         os.path.join(mydir, 'data_tests', 'methane_c2p.sdf'),
@@ -70,6 +76,18 @@ def test_setup_calculations_false():
             'blah')
     except ValueError:
         assert True
+
+def test_process_results():
+    process_results(os.path.join(mydir, 'data_tests', 'gbi-200.sdf'), 'opt')
+    os.remove(os.path.join(os.getcwd(), 'gbi-210.sdf'))
+    os.remove(os.path.join(os.getcwd(), 'gbi-220.sdf'))
+
+def test_filter_results():
+    filter_results(os.path.join(mydir, 'data_tests', 'gbi_prefilt.sdf'),
+        os.path.join(mydir, 'data_tests', 'output.sdf'),
+        'mp2','def2-SV(P)')
+    os.remove(os.path.join(mydir, 'data_tests', 'output.sdf'))
+    os.remove(os.path.join(os.getcwd(), 'numConfs.txt')) # don't use mydir here
 
 # test manually without pytest
 if 0:
