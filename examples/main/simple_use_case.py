@@ -1,9 +1,7 @@
 """
 simple_use_case.py
 """
-import sys
 import os
-import pytest
 
 os.system("python ../executor.py -f data_tests/two_alkanes.smi --setup -m 'mp2' -b 'def2-sv(p)'")
 

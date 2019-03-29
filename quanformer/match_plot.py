@@ -41,7 +41,7 @@ def plot_heat_rmse(molName,
                    colors='PRGn_r'):
     """
     """
-    plttitle = "%s\n%s" % (ptitle, molName)
+    #plttitle = "%s\n%s" % (ptitle, molName)
     figname = "%s_%s.png" % (fprefix, molName)
     x = list(range(len(rmsArray)))
     y = list(range(len(rmsArray)))

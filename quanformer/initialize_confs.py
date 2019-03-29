@@ -90,13 +90,13 @@ def resolve_clashes(mol, clashfile):
     if not szSP(tmpmol, szResults):
         print('szybki run failed for %s' % tmpmol.GetTitle())
         return False
-    Etotsp = szResults.GetTotalEnergy()
+    #Etotsp = szResults.GetTotalEnergy()
     Evdwsp = szResults.GetEnergyTerm(oeszybki.OEPotentialTerms_MMFFVdW)
     if Evdwsp > 35:
         if not szOpt(tmpmol, szResults):
             print('szybki run failed for %s' % tmpmol.GetTitle())
             return False
-        Etot = szResults.GetTotalEnergy()
+        #Etot = szResults.GetTotalEnergy()
         Evdw = szResults.GetEnergyTerm(oeszybki.OEPotentialTerms_MMFFVdW)
         wfile = open(clashfile, 'a')
         wfile.write(
