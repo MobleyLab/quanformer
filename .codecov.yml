@@ -18,3 +18,4 @@ ignore:
   - "quanformer/quan2modsem.py"
   - "quanformer/match_minima.py"
   - "quanformer/opt_vs_spe.py"
+  - "quanformer/stitch_spe.py"
