@@ -14,3 +14,7 @@ comment:
   paths: null
 ignore:
   - "quanformer/match_plot.py"
+
+  - "quanformer/quan2modsem.py"
+  - "quanformer/match_minima.py"
+  - "quanformer/opt_vs_spe.py"

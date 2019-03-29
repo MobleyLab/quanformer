@@ -16,7 +16,39 @@ import openeye.oechem as oechem
 import sys
 
 
-def get_sd_list(mol, datum, Package='Psi4', Method=None, Basisset=None):
+def define_tag(datum, package, method, basisset):
+    # CASE SENSITIVE
+    # this function is case-sensitive though get_sd_list should remove sensitivity
+
+    tagdict = {
+        "QM opt energy": "QM {} Final Opt. Energy (Har) {}/{}".format(
+            package, method, basisset),
+        "QM opt energy scs": "QM {} Final Opt. Energy (Har) SCS-{}/{}".format(
+            package, method, basisset),
+        "QM opt energy initial": "QM {} Initial Opt. Energy (Har) {}/{}".format(
+            package, method, basisset),
+        "QM spe": "QM {} Single Pt. Energy (Har) {}/{}".format(
+            package, method, basisset),
+        "QM spe scs": "QM {} Single Pt. Energy (Har) SCS-{}/{}".format(
+            package, method, basisset),
+        "MM opt energy": "MM Szybki SD Energy",
+        "original index": "Original omega conformer number",
+        "opt runtime": "QM {} Opt. Runtime (sec) {}/{}".format(
+            package, method, basisset),
+        "spe runtime": "QM {} Single Pt. Runtime (sec) {}/{}".format(
+            package, method, basisset),
+        "opt step": "QM {} Opt. Steps {}/{}".format(package, method, basisset),
+    }
+    try:
+        taglabel = tagdict[datum]
+    except KeyError as exc:
+        raise ValueError("Error in defining string to extract SD data. "
+            "Please specify one of the following keys for get_sd_list: ",
+            tagdict.keys()) from exc
+
+    return taglabel
+
+def get_sd_list(mol, datum, package='Psi4', method=None, basisset=None):
     """
     Get list of specified SD tag for all confs in mol.
 
@@ -25,65 +57,33 @@ def get_sd_list(mol, datum, Package='Psi4', Method=None, Basisset=None):
     mol:        OEChem molecule with all of its conformers
     datum:       string description of property of interest
         options implemented: "QM opt energy" "MM opt energy"
-    Package:    software package used for QM calculation. Psi4 or Turbomole.
-    Method:     string, for specific properties. e.g. 'mp2'
-    Basisset:   string, for specific properties. e.g. '6-31+G(d)'
+    package:    software package used for QM calculation. Psi4 or Turbomole.
+    method:     string, for specific properties. e.g. 'mp2'
+    basisset:   string, for specific properties. e.g. '6-31+G(d)'
 
     Returns
     -------
     sdlist: A 1D N-length list for N conformers with property from SDTag.
     """
 
-    # TODO: dictionary
-    if datum == "QM opt energy":
-        taglabel = "QM %s Final Opt. Energy (Har) %s/%s" % (Package, Method,
-                                                            Basisset)
-    if datum == "QM opt energy scs":
-        taglabel = "QM %s Final Opt. Energy (Har) SCS-%s/%s" % (
-            Package, Method, Basisset)
-    if datum == "QM opt energy initial":
-        taglabel = "QM %s Initial Opt. Energy (Har) %s/%s" % (Package, Method,
-                                                              Basisset)
-    if datum == "QM spe":
-        taglabel = "QM %s Single Pt. Energy (Har) %s/%s" % (Package, Method,
-                                                            Basisset)
-    if datum == "QM spe scs":
-        taglabel = "QM %s Single Pt. Energy (Har) SCS-%s/%s" % (
-            Package, Method, Basisset)
-    if datum == "MM opt energy":
-        taglabel = "MM Szybki Newton Energy"
+    taglabel = define_tag(datum, package, method, basisset)
 
-    if datum == "original index":
-        taglabel = "Original omega conformer number"
-
-    if datum == "opt runtime":
-        taglabel = "QM %s Opt. Runtime (sec) %s/%s" % (Package, Method,
-                                                       Basisset)
-    if datum == "spe runtime":
-        taglabel = "QM %s Single Pt. Runtime (sec) %s/%s" % (Package, Method,
-                                                             Basisset)
-    if datum == "opt step":
-        taglabel = "QM %s Opt. Steps %s/%s" % (Package, Method, Basisset)
-
-    try:
-        taglabel
-    # "local var referenced before assignment"
-    except UnboundLocalError as e:  # lgtm [py/unreachable-statement]
-        raise ValueError("Error in input tag of extracting SD data.")
-
-    SDList = []
+    sd_list = []
     for j, conf in enumerate(mol.GetConfs()):
         for x in oechem.OEGetSDDataPairs(conf):
+
             # Case: opt did not finish --> append nan
             if "note on opt." in x.GetTag().lower(
             ) and "did not finish" in x.GetValue().lower():
-                SDList.append('nan')
+                sd_list.append('nan')
                 break
+
             # Case: want energy value OR want original index number
             elif taglabel.lower() in x.GetTag().lower():
-                SDList.append(x.GetValue())
+                sd_list.append(x.GetValue())
                 break
-    return SDList
+
+    return sd_list
 
 
 def set_sd_tags(Conf, Props, calctype):
@@ -95,7 +95,7 @@ def set_sd_tags(Conf, Props, calctype):
     -------
     If the exact tag already exists, and you want to add a new one then there
     will be duplicate tags with maybe different data. (NOT recommended).
-    Then the function to get SDList will only get one or the other;
+    Then the function to get sd_list will only get one or the other;
     I think it just gets the first matching tag.
 
     TODO: maybe add some kind of checking to prevent duplicate tags added
@@ -195,10 +195,15 @@ def delete_tag(mol, tag):
     """
     Delete specified SD tag from all conformers of mol.
 
+    Note: Multi-conformer molecule must be specified
+    else will get AttributeError:
+    'OEGraphMol' object has no attribute 'GetConfs'.
+
     Parameters
     ----------
-    mol:        OEChem molecule with all of its conformers
-    tag:        exact string label of the data to delete
+    mol : multi-conformer OEChem molecule
+    tag : string
+        exact label of the data to delete
 
     """
     for j, conf in enumerate(mol.GetConfs()):

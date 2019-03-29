@@ -23,13 +23,21 @@ def test_initiate_dict():
 
 
 def test_get_conf_data():
-    # TODO
-    pass
+    props = get_conf_data({}, 'spe',
+        os.path.join(mydir, 'data_tests', 'timer.dat'),
+        os.path.join(mydir, 'data_tests', 'output_spe.dat'))
+    assert props['time'] == 847.0
+    assert props['basis'] == 'cc-pVTZ'
+    assert props['method'] == 'mp2'
+    assert props['finalEnergy'] == -463.3016772141739
+    assert props['finalSCSEnergy'] == -465.19422272924896
 
 
-def test_set_conf_data():
-    # TODO
-    pass
+# TODO
+#def test_set_conf_data():
+#    mol = read_mol(os.path.join(mydir, 'data_tests', 'methane_title-1.0.sdf'))
+#    {'package': 'Psi4', 'missing': False, 'time': 847.0, 'basis': 'cc-pVTZ', 'method': 'mp2', 'finalEnergy': -463.3016772141739, 'finalSCSEnergy': -465.19422272924896}
+#    set_conf_data(mol, props, 'spe')
 
 
 def test_check_title():

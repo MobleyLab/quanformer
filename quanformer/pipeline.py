@@ -166,7 +166,6 @@ def process_results(infile, calctype='opt', suffix=[]):
                 "suffixes (see README).\nPlease specify suffix(es) in a "
                 "list in accordance with documentation.")
 
-
     # get psi4 results
     print("Getting Psi4 results for %s ..." % (checked_infile))
     method, basisset = get_psi_results.get_psi_results(

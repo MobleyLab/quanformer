@@ -16,10 +16,42 @@ from quanformer.proc_tags import *
 
 # -----------------------
 
-def test_get_sd_list():
-    # TODO
-    pass
+def test_define_tag():
+    tag = define_tag("QM opt energy", "Psi4", "mp2", "def2-SV(P)")
+    assert tag == "QM Psi4 Final Opt. Energy (Har) mp2/def2-SV(P)"
+    tag = define_tag("QM opt energy scs", "Psi4", "mp2", "def2-SV(P)")
+    assert tag == "QM Psi4 Final Opt. Energy (Har) SCS-mp2/def2-SV(P)"
+    tag = define_tag("QM opt energy initial", "Psi4", "mp2", "def2-SV(P)")
+    assert tag == "QM Psi4 Initial Opt. Energy (Har) mp2/def2-SV(P)"
+    tag = define_tag("QM spe", "Psi4", "mp2", "def2-SV(P)")
+    assert tag == "QM Psi4 Single Pt. Energy (Har) mp2/def2-SV(P)"
+    tag = define_tag("QM spe scs", "Psi4", "mp2", "def2-SV(P)")
+    assert tag == "QM Psi4 Single Pt. Energy (Har) SCS-mp2/def2-SV(P)"
+    tag = define_tag("MM opt energy", None, None, None)
+    assert tag == "MM Szybki SD Energy"
+    tag = define_tag("original index", None, None, None)
+    assert tag == "Original omega conformer number"
+    tag = define_tag("opt runtime", "Psi4", "mp2", "def2-SV(P)")
+    assert tag == "QM Psi4 Opt. Runtime (sec) mp2/def2-SV(P)"
+    tag = define_tag("spe runtime", "Psi4", "mp2", "def2-SV(P)")
+    assert tag == "QM Psi4 Single Pt. Runtime (sec) mp2/def2-SV(P)"
+    tag = define_tag("opt step", "Psi4", "mp2", "def2-SV(P)")
+    assert tag == "QM Psi4 Opt. Steps mp2/def2-SV(P)"
 
+def test_get_sd_list():
+    mols = read_mol(os.path.join(mydir, 'data_tests', 'two_alkanes_prefilt.sdf'), True)
+    mol = next(mols)
+    data = get_sd_list(mol, "MM opt energy")
+    assert len(data) == 9
+    assert data[3] == '6.736580988585'
+
+def test_get_sd_list_fail():
+    mols = read_mol(os.path.join(mydir, 'data_tests', 'two_alkanes_prefilt.sdf'), True)
+    mol = next(mols)
+    try:
+        data = get_sd_list(mol, "blah")
+    except ValueError:
+        assert True
 
 def test_set_sd_tags_hess():
     mol = read_mol(os.path.join(mydir, 'data_tests', 'methane_c2p.sdf'))
@@ -90,12 +122,15 @@ def test_set_sd_tags_opt_scs():
 
 
 def test_delete_tag():
-    # TODO
-    pass
+    mols = read_mol(os.path.join(mydir, 'data_tests', 'carbon-222.sdf'), True)
+    mol = next(mols)
+    conf = list(mol.GetConfs())[0]
+    taglabel = 'MM Szybki SD Energy'
+    assert oechem.OEHasSDData(conf, taglabel) == True
+    delete_tag(mol, taglabel)
+    assert oechem.OEHasSDData(conf, taglabel) == False
 
 
 # test manually without pytest
-if 0:
-    test_set_sd_tags_hess()
-    test_set_sd_tags_spe_notfinish()
-    test_set_sd_tags_spe_didfinish()
+if 1:
+    test_get_sd_list()
