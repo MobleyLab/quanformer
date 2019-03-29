@@ -19,10 +19,9 @@ Set up structures and prepare calculations:
     qp.setup_conformers('two_alkanes.smi')
     qp.setup_calculations('two_alkanes-200.sdf','mp2','def2-sv(p)')
 
-Your directory structure should look something like this::
+Your directory structure should look something like this:
 
 .. code-block:: none
-
     .
     ├── AlkEthOH_c1008
     │   ├── 1
