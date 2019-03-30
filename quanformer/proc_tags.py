@@ -13,7 +13,6 @@ By: Victoria T. Lim
 """
 
 import openeye.oechem as oechem
-import sys
 
 
 def define_tag(datum, package, method, basisset):

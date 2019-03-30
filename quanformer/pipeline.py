@@ -9,7 +9,7 @@ By:         Victoria T. Lim
 
 """
 
-import os, sys
+import os
 
 import quanformer.initialize_confs as initialize_confs
 import quanformer.filter_confs     as filter_confs
