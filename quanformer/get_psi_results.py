@@ -18,12 +18,8 @@ import os, sys
 import pickle
 import warnings
 import openeye.oechem as oechem
-
-# local testing vs. travis testing
-try:
-    import quanformer.proc_tags as pt
-except ModuleNotFoundError:
-    import proc_tags as pt  # VTL temporary bc travis fails to import
+import quanformer.proc_tags as pt
+import quanformer.reader as reader
 
 ### ------------------- Functions -------------------
 
@@ -354,12 +350,8 @@ def get_psi_results(origsdf,
     if calctype not in {'opt', 'spe', 'hess'}:
         raise ValueError("Specify a valid calculation type.")
 
-    # read in sdf file and distinguish each molecule's conformers
-    ifs = oechem.oemolistream()
-    ifs.SetConfTest(oechem.OEAbsoluteConfTest())
-    if not ifs.open(origsdf):
-        raise FileNotFoundError("Unable to open %s for reading" % origsdf)
-    molecules = ifs.GetOEMols()
+    # read in molecules
+    molecules = reader.read_mols(origsdf)
 
     # open outstream file
     writeout = os.path.join(wdir, finsdf)
@@ -425,7 +417,6 @@ def get_psi_results(origsdf,
         pickle.dump(hdict, open(hfile, 'wb'))
 
     # close file streams
-    ifs.close()
     write_ofs.close()
     return method, basisset
 

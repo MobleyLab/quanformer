@@ -14,7 +14,7 @@ import pickle
 import itertools
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-import proc_tags as pt  # for get_sd_list
+import quanformer.proc_tags as pt
 
 ### ------------------- Functions -------------------
 

@@ -16,13 +16,15 @@ import os
 import sys
 import openeye.oechem as oechem
 import numpy as np
-import proc_tags as pt
 import math
 from collections import defaultdict
 
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
+
+import quanformer.proc_tags as pt
+import quanformer.reader as reader
 
 ### ------------------- Functions -------------------
 
@@ -105,12 +107,7 @@ def getRMSD(sdfRef, theory, rmsdict, package='Psi4'):
 
     # create a molecule read in stream
     print("Opening SDF file %s" % sdfRef)
-    ifsRef = oechem.oemolistream()
-    ifsRef.SetConfTest(oechem.OEAbsoluteConfTest())
-    if not ifsRef.open(sdfRef):
-        oechem.OEThrow.Fatal("Unable to open %s for reading" % sdfRef)
-    # store all molecules in molsRef
-    molsRef = ifsRef.GetOEMols()
+    molsRef = reader.read_mols(sdfRef)
 
     # create file object for output RMSD calculation
     RMSD = open("RMSD.txt", 'a')

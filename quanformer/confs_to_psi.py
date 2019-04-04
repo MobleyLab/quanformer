@@ -11,6 +11,7 @@ Version:    Nov 30 2018
 import os, sys
 import openeye.oechem as oechem
 import json
+import quanformer.reader as reader
 
 
 def check_calc(calctype):
@@ -273,15 +274,11 @@ def confs_to_psi(insdf,
     """
     wdir = os.getcwd()
 
-    ### Read in .sdf file and distinguish each molecule's conformers
-    ifs = oechem.oemolistream()
-    ifs.SetConfTest(oechem.OEAbsoluteConfTest())
-    if not ifs.open(insdf):
-        oechem.OEThrow.Warning("Unable to open %s for reading" % insdf)
-        return
+    # open molecules
+    molecules = reader.read_mols(insdf)
 
     ### For each molecule: for each conf, generate input
-    for mol in ifs.GetOEMols():
+    for mol in molecules:
         print(mol.GetTitle(), mol.NumConfs())
         if not mol.GetTitle():
             sys.exit("ERROR: OEMol must have title assigned! Exiting.")
@@ -315,4 +312,3 @@ def confs_to_psi(insdf,
                     make_psi_input(conf, label, method, basis, calctype,
                                    memory))
             ofile.close()
-    ifs.close()

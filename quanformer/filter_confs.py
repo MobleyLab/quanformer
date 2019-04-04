@@ -1,17 +1,22 @@
 #!/usr/bin/env python
+"""
+filter_confs.py
 
-## By: Victoria T. Lim
+This script takes an SDF file and, for each molecule:
+ - conformers are compared by energy
+ - conformers are compared by RMSD
+ - conformers are removed if considered duplicate by energy/RMSD.
 
-## This script takes an SDF file and, for each molecule:
-##  - conformers are compared by energy
-##  - conformers are compared by RMSD
-## in order to roughly filter out duplicate minima and keep unique ones.
-## Filtered conformers for all molecules are written out in SDF file.
+Import and call filter_confs.filter_confs(infile, tag, outfile)
 
-## Import and call filter_confs.filter_confs(infile, tag, outfile)
+By: Victoria T. Lim
+
+"""
+
 
 import os
 import openeye.oechem as oechem
+import quanformer.reader as reader
 
 ### ------------------- Functions -------------------
 
@@ -155,12 +160,8 @@ def filter_confs(infile, tag, outfile):
     numConfsF = open(os.path.join(os.getcwd(), "numConfs.txt"), 'a')
     numConfsF.write("\n{}\n".format(tag))
 
-    # Open file to be processed.
-    rmsd_ifs = oechem.oemolistream()
-    if not rmsd_ifs.open(infile):
-        oechem.OEThrow.Fatal("Unable to open %s for reading" % infile)
-    rmsd_ifs.SetConfTest(oechem.OEAbsoluteConfTest())
-    rmsd_molecules = rmsd_ifs.GetOEMols()
+    # open molecule file
+    rmsd_molecules = reader.read_mols(infile)
 
     # Open outstream file.
     rmsd_ofs = oechem.oemolostream()
@@ -177,7 +178,6 @@ def filter_confs(infile, tag, outfile):
             oechem.OEWriteConstMolecule(rmsd_ofs, mol)
         else:
             numConfsF.write("%s\t0\n" % (mol.GetTitle()))
-    rmsd_ifs.close()
     numConfsF.close()
     rmsd_ofs.close()
 
