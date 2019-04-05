@@ -86,7 +86,7 @@ def avg_mol_time(titles, infile, method, basis, tag):
         stdtime = np.std(time_array)
 
         # write out data to file and store in dictionary
-        timeF.write("%s\t%d confs\t\t%.3f +- %.3f\n" % (mol_i.GetTitle(), time_array.size, meantime, stdtime))
+        timeF.write("  %s\t%d confs\t\t%.3f +- %.3f\n" % (mol_i.GetTitle(), time_array.size, meantime, stdtime))
         name = mol_i.GetTitle()
         if name not in titles:
             titles[name] = []
@@ -711,7 +711,7 @@ def survey_times(wholedict):
     method_labels_short = [
         wholedict[item]['theory'] + ' ' + wholedict[item]['tagkey'].split(" ")[0] for item in wholedict
     ]
-    method_labels = [val for val in method_labels_short for _ in (0, 1)]
+    method_labels = [val for val in method_labels_short for _ in range(len(titles))]
     # https://stackoverflow.com/questions/2449077/duplicate-each-member-in-a-list-python
 
     plotlist = np.column_stack((mol_names, method_labels, timearray.astype(np.object)))
