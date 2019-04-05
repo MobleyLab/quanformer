@@ -1,8 +1,5 @@
-# first line is reference file for all subsequent lines.
-# file name, fromSPE, method, basis set.
 # level of theory, filename, tag data, label
 b3lyp-d3mbj / def2-tzvp , data_tests/survey_confs/divrefine-221-opt2.sdf, opt runtime, REF 
 b3lyp-d3mbj / def2-tzvp , data_tests/survey_confs/divrefine-221-spe1.sdf, blah, SPE1
 mp2         / cc-pvtz   , data_tests/survey_confs/divrefine-221-spe2.sdf, spe runtime, SPE2
 pbe0        / 6-311g**  , data_tests/survey_confs/divrefine-221-spe3.sdf, spe runtime, SPE3
-#SPE4, divrefine-221-spe3.sdf, spe, mp2        , aug-cc-pVTZ
