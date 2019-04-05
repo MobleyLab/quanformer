@@ -23,7 +23,6 @@ mpl.use("Agg")  # for Mac OS X error of NSInvalidArgumentException
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
-import openeye.oechem as oechem
 import quanformer.proc_tags as pt
 import quanformer.reader as reader
 
@@ -98,6 +97,9 @@ def avg_mol_time(titles, infile, method, basis, tag):
 
 def plot_groupedbar(ax, dpoints):
     """
+    *** TODO add error bars ***
+
+
     Function modified from Peter Kerpedjiev.
     http://emptypipes.org/2013/11/09/matplotlib-multicategory-barchart/
 
@@ -216,7 +218,6 @@ def extract_enes(dict1):
     qmethod, qbasis = separated_theory(dict1['theory'])
 
     titleMols = []
-    rmsds = []
     confNums = []
     enes = []
     confNans = []
@@ -429,12 +430,7 @@ def rmsd_two_files(dict1, dict2):
 
     # load molecules and parse method information
     mols1 = reader.read_mols(dict1['fname'])
-    tag1 = dict1['tagkey']
-    qmethod1, qbasis1 = separated_theory(dict1['theory'])
-
     mols2 = reader.read_mols(dict2['fname'])
-    tag2 = dict2['tagkey']
-    qmethod2, qbasis2 = separated_theory(dict2['theory'])
 
     # extract energies all mols of each file
     mols1_titles, mols1_indices, mols1_enes, mols1_nans = extract_enes(dict1)
@@ -464,8 +460,8 @@ def rmsd_two_files(dict1, dict2):
         # exclude conformers for which job did not finish (nan)
         indices1_prune1, enes1_prune1 = remove_dead_conformers(enes1, indices1_orig, nans1)
         indices2_prune1, enes2_prune1 = remove_dead_conformers(enes2, indices2_orig, nans1)
-        indices1_prune2, enes1_prune2 = remove_dead_conformers(enes1, indices1_orig, nans2)
-        indices2_prune2, enes2_prune2 = remove_dead_conformers(enes2, indices2_orig, nans2)
+        indices1_prune2, enes1_prune2 = remove_dead_conformers(enes1_prune1, indices1_prune1, nans2)
+        indices2_prune2, enes2_prune2 = remove_dead_conformers(enes2_prune1, indices2_prune1, nans2)
 
         # make sure conformer indices match after pruning
         if not (indices1_prune2 == indices2_prune2).all():

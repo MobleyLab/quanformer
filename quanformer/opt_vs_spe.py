@@ -14,7 +14,6 @@ WARNING: If comparing many files, they should all be analogous!
 
 import os
 import sys
-import openeye.oechem as oechem
 import numpy as np
 import math
 from collections import defaultdict

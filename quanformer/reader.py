@@ -9,7 +9,6 @@ By:         Victoria T. Lim
 
 """
 
-import os
 import openeye.oechem as oechem
 import collections  # ordered dictionary
 
