@@ -1,0 +1,45 @@
+
+File: divrefine-221-spe1.sdf
+Average [b3lyp-d3mbj/def2-tzvp] [spe runtimes] over all confs for each molecule
+Div_3	1 confs		275.000 +- 0.000
+Div_6	4 confs		96.250 +- 6.796
+
+File: divrefine-221-spe2.sdf
+Average [mp2/cc-pvtz] [spe runtimes] over all confs for each molecule
+Div_3	1 confs		386.000 +- 0.000
+Div_6	4 confs		101.000 +- 3.808
+
+File: divrefine-221-spe3.sdf
+Average [pbe0/6-311g**] [spe runtimes] over all confs for each molecule
+Div_3	1 confs		114.000 +- 0.000
+Div_6	4 confs		42.000 +- 2.121
+
+File: divrefine-221-spe1.sdf
+Average [b3lyp-d3mbj/def2-tzvp] [spe runtimes] over all confs for each molecule
+Div_3	1 confs		275.000 +- 0.000
+Div_6	4 confs		96.250 +- 6.796
+
+File: divrefine-221-spe2.sdf
+Average [mp2/cc-pvtz] [spe runtimes] over all confs for each molecule
+Div_3	1 confs		386.000 +- 0.000
+Div_6	4 confs		101.000 +- 3.808
+
+File: divrefine-221-spe3.sdf
+Average [pbe0/6-311g**] [spe runtimes] over all confs for each molecule
+Div_3	1 confs		114.000 +- 0.000
+Div_6	4 confs		42.000 +- 2.121
+
+File: divrefine-221-spe1.sdf
+Average [b3lyp-d3mbj/def2-tzvp] [spe runtimes] over all confs for each molecule
+Div_3	1 confs		275.000 +- 0.000
+Div_6	4 confs		96.250 +- 6.796
+
+File: divrefine-221-spe2.sdf
+Average [mp2/cc-pvtz] [spe runtimes] over all confs for each molecule
+Div_3	1 confs		386.000 +- 0.000
+Div_6	4 confs		101.000 +- 3.808
+
+File: divrefine-221-spe3.sdf
+Average [pbe0/6-311g**] [spe runtimes] over all confs for each molecule
+Div_3	1 confs		114.000 +- 0.000
+Div_6	4 confs		42.000 +- 2.121

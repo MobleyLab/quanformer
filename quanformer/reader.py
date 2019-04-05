@@ -54,8 +54,6 @@ def read_text_input(infile, reffile=None, ref_index=None):
         for line in f:
             if line.startswith('#'):
                 continue
-            if reffile is not None and reffile in line:
-                ref_index = linecount
             dataline = [x.strip() for x in line.split(',')]
             wholedict[linecount] = {
                 'theory': dataline[0],
@@ -65,4 +63,4 @@ def read_text_input(infile, reffile=None, ref_index=None):
             }
             linecount += 1
 
-    return wholedict, ref_index
+    return wholedict

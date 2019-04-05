@@ -1,0 +1,4 @@
+crsync sshgpl:/beegfs/DATA/mobley/limvt/openforcefield/pipeline/archive/stitch-spe-v2/runcmd .
+crsync sshgpl:/beegfs/DATA/mobley/limvt/openforcefield/pipeline/archive/stitch-spe-v1/4/*sdf .
+crsync sshgpl:/DFS-L/old_beegfs_data/mobley/limvt/openforcefield/pipeline/archive/stitch-spe-v2/4_div/stitch.in .
+

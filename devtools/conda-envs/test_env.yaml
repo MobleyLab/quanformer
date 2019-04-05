@@ -8,6 +8,8 @@ dependencies:
   - openeye-toolkits
   - pyyaml
   - numpy
+  - matplotlib
+  - scipy
 
     # Testing
   - pytest

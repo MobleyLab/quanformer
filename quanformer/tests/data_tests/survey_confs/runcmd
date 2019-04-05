@@ -1,0 +1,2 @@
+python /beegfs/DATA/mobley/limvt/openforcefield/pipeline/github/quanformer/stitch_spe.py -i stitch.in --plotbars --reffile divrefine-221-opt2.sdf
+python /beegfs/DATA/mobley/limvt/openforcefield/pipeline/github/quanformer/stitch_spe.py -i stitch.in

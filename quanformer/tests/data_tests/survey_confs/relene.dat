@@ -1,0 +1,23 @@
+# Spread of relative energies (kcal/mol) over diff QM methods averaged over conformers
+# File 0: divrefine-221-opt2.sdf
+#   calc=opt runtime, b3lyp-d3mbj / def2-tzvp
+# File 1: divrefine-221-spe1.sdf
+#   calc=spe runtime, b3lyp-d3mbj / def2-tzvp
+# File 2: divrefine-221-spe2.sdf
+#   calc=spe runtime, mp2         / cc-pvtz
+# File 3: divrefine-221-spe3.sdf
+#   calc=spe runtime, pbe0        / 6-311g**
+
+
+# Mol Div_3 Spread: n/a
+# ==================================================================
+# conf	relative energies (kcal/mol) in column order by file (listed at top)
+1	0.0	0.0	0.0	0.0	
+
+# Mol Div_6 Spread: 2.275128416353051
+# ==================================================================
+# conf	relative energies (kcal/mol) in column order by file (listed at top)
+1	0.0	0.0	0.0	0.0	
+2	10667.661500000046	-8785.132999999994	4392.566500000001	-1882.5285000000003	
+3	-1882.5284999999567	-1255.0190000000002	2510.0380000000005	-3137.5475000000006	
+4	47690.72200000001	-9412.642499999994	-1882.5285000000003	0.0	

@@ -1,0 +1,18 @@
+# RMSD of relative energies (kcal/mol) wrt file 0
+# File 0: data_tests/survey_confs/divrefine-221-opt2.sdf
+#   calc=QM opt energy, b3lyp-d3mbj / def2-tzvp
+# File 1: data_tests/survey_confs/divrefine-221-spe1.sdf
+#   calc=QM spe, b3lyp-d3mbj / def2-tzvp
+# File 2: data_tests/survey_confs/divrefine-221-spe2.sdf
+#   calc=QM spe, mp2         / cc-pvtz
+# File 3: data_tests/survey_confs/divrefine-221-spe3.sdf
+#   calc=QM spe, pbe0        / 6-311g**
+
+
+# Mol Div_6 RMSDs: 0.0030128588708759683	0.1723472310865529	0.6096569834989136	
+# ==================================================================
+# conf	relative energies (kcal/mol) in column order by file (listed at top)
+1	0.0	0.0	0.0	0.0	
+2	-3.137625753879547e-06	0.0011922680423595011	0.0025276083033531904	0.00048004474956542253	
+3	-0.27397943288087845	-0.2733274505008012	-0.48505480331368744	-1.014167676155921	
+4	-0.2742768723401241	-0.2793145186151378	-0.48534910526359454	-1.027381143765524	
