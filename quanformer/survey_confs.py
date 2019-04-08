@@ -5,7 +5,7 @@ survey_conformers.py
 Purpose:    Compare energies and calculation times of the same molecule set
             across different QM methods.
 
-Version:    Apr 2 2019
+Version:    Apr 8 2019
 By:         Victoria T. Lim
 
 """
@@ -60,7 +60,8 @@ def avg_mol_time(titles, infile, method, basis, tag):
     Returns
     -------
     titles : dictionary
-        dictionary with extracted data from SDF file
+        dictionary with extracted data from SDF file; keys are molnames,
+        values are lists of list of [avg_time, stdev_time] for many QM methods
 
     """
 
@@ -95,7 +96,7 @@ def avg_mol_time(titles, infile, method, basis, tag):
     return titles
 
 
-def plot_groupedbar(ax, dpoints):
+def plot_groupedbar(ax, labels_data_std, errbar=False):
     """
     *** TODO add error bars ***
 
@@ -109,36 +110,39 @@ def plot_groupedbar(ax, dpoints):
     Parameters
     ----------
     ax: The plotting axes from matplotlib.
-    dpoints: The data set as an (n, 3) numpy array
+    labels_data_std: The data set as an (n, 3) numpy array
 
     """
 
-    # Aggregate the color_labels and the x_labels according to their
-    # mean values
-    color_labels = [(c, np.mean(dpoints[dpoints[:, 0] == c][:, 2].astype(float))) for c in np.unique(dpoints[:, 0])]
-    x_labels = [(c, np.mean(dpoints[dpoints[:, 1] == c][:, 2].astype(float))) for c in np.unique(dpoints[:, 1])]
+    # Aggregate the color_labels and the x_labels according to their mean values
+    color_labels = [(c, np.mean(labels_data_std[labels_data_std[:, 0] == c][:, 2].astype(float))) for c in np.unique(labels_data_std[:, 0])]
+    x_labels = [(c, np.mean(labels_data_std[labels_data_std[:, 1] == c][:, 2].astype(float))) for c in np.unique(labels_data_std[:, 1])]
 
     # sort the color_labels, x_labels and data so that the bars in
     # the plot will be ordered by x_category and color_label
     color_labels = [c[0] for c in sorted(color_labels, key=o.itemgetter(1))]
     x_labels = [c[0] for c in sorted(x_labels, key=o.itemgetter(1))]
 
-    dpoints = np.array(sorted(dpoints, key=lambda x: x_labels.index(x[1])))
+    labels_data_std = np.array(sorted(labels_data_std, key=lambda x: x_labels.index(x[1])))
 
     # the space between each set of bars
     space = 0.3
     n = len(color_labels)
     width = (1 - space) / (len(color_labels))
+    indices = range(len(x_labels))
 
     # Create a set of bars at each position
     for i, cond in enumerate(color_labels):
-        indices = range(len(x_labels))
-        #indices = range(1, len(x_labels)+1)
-        vals = dpoints[dpoints[:, 0] == cond][:, 2].astype(np.float)
+        vals = labels_data_std[labels_data_std[:, 0] == cond][:, 2].astype(np.float)
         pos = [j - (1 - space) / 2. + i * width for j in indices]
-        ax.bar(pos, vals, width=width, label=cond, color=cm.Accent(float(i) / n))
+        if errbar:
+            stds = labels_data_std[labels_data_std[:, 0] == cond][:, 3].astype(np.float)
+            ax.bar(pos, vals, yerr=stds, width=width, label=cond, color=cm.Accent(float(i) / n))
+        else:
+            ax.bar(pos, vals, width=width, label=cond, color=cm.Accent(float(i) / n))
 
     # Set the x-axis tick labels to be equal to the x_labels
+    indices = [x - 1 for x in indices]  # OPTIONAL, with many labels, may want to finagle
     ax.set_xticks(indices)
     ax.set_xticklabels(x_labels)
     plt.setp(plt.xticks()[1], rotation=50)
@@ -666,53 +670,67 @@ def survey_times(wholedict):
 
     # create storage space
     titles = {}
-    timeplot = []  # timeplot[i][j] is avg of conformer times for mol i, file j
-    stdplot = []  # stdplot[i][j] is stdev of conformer times for mol i, file j
+    timeplot = []  # timeplot[i][j] == avg of conformer times for mol i, file j
+    stdplot = []  # stdplot[i][j] == stdev of conformer times for mol i, file j
 
-    # loop over all files and avg conformer times for each mol
+    # loop over each files and compute avg conformer times for all mols
     for i in wholedict:
         qmethod, qbasis = separated_theory(wholedict[i]['theory'])
         qtag = wholedict[i]['tagkey']
         titles = avg_mol_time(titles, wholedict[i]['fname'], qmethod, qbasis, qtag)
 
-    # convert dictionary to arrays
-    for item in titles.values():
-        timeplot.append([k[0] for k in item])
-        stdplot.append([k[1] for k in item])
+    # extract data in dictionary to arrays
+    for mol in titles.values():
+        timeplot.append([k[0] for k in mol])
+        stdplot.append([k[1] for k in mol])
 
-    # delete mols with missing data. asarray must have uniform length sublists <<==== mols, or confs?
+    # calculate number of datafiles for each mol
     lens = [len(x) for x in timeplot]
-    m = stats.mode(lens)[0][0]  # ModeResult(mode=array([2]), count=array([40]))
-    tracker = []  # indices of which sublists (mols) to remove
+
+    # obtain mode representing most common number of files
+    # first [0] to get modes not counts, second [0] to get highest mode
+    m = stats.mode(lens)[0][0]
+
+    # delete sublists (mols) with missing data; asarray takes uniform length sublists
+    # should only happen if 1+ method fails job for ALL confs of some mol
+    # TODO: this might be addressed in a better way
+    tracker = []
     for i, t in enumerate(timeplot):
         if len(t) != m:
             tracker.append(i)
     for index in sorted(tracker, reverse=True):
         del timeplot[index]
         del stdplot[index]
-    timeplot = np.asarray(timeplot).T  # timeplot[i][j] == time of file i, mol j
-    stdplot = np.asarray(stdplot).T
 
-    # build plot list
-    timeplot = np.asarray(timeplot).T  # timeplot[i][j] == time of file i, mol j
-    stdplot = np.asarray(stdplot).T
-
+    # prepare plot data
+    timeplot = np.asarray(timeplot)
+    stdplot = np.asarray(stdplot)
     timearray = timeplot.flatten('F')
+    stdarray = stdplot.flatten('F')
 
+    # generate mol labels (colors) from dict keys, repeated by number of files
+    # e.g., ['a', 'b', 'c', 'a', 'b', 'c']
     mol_names = list(titles.keys()) * len(wholedict)
-    method_labels_short = [
-        wholedict[item]['theory'] + ' ' + wholedict[item]['tagkey'].split(" ")[0] for item in wholedict
-    ]
-    method_labels = [val for val in method_labels_short for _ in range(len(titles))]
-    # https://stackoverflow.com/questions/2449077/duplicate-each-member-in-a-list-python
 
-    plotlist = np.column_stack((mol_names, method_labels, timearray.astype(np.object)))
+    # generate method labels (x-axis) from dict value of 'theory', repeated
+    # by number of mols. e.g., ['a', 'a', 'b', 'b', 'c', 'c']
+    # - remove duplicated spaces from method listing in input file
+    # - get the first word in tagkey which should be 'opt' or 'spe'
+    # https://stackoverflow.com/questions/2449077/duplicate-each-member-in-a-list-python
+    method_labels_short = [
+        " ".join(wholedict[item]['theory'].split()) + ' ' +
+        wholedict[item]['tagkey'].split(" ")[0] for item in wholedict]
+    method_labels = [val for val in method_labels_short for _ in range(len(titles))]
+
+    # combine color labels, x labels, and plot data
+    plotlist = np.column_stack((mol_names, method_labels,
+        timearray.astype(np.object), stdarray.astype(np.object)))
     print(plotlist)
 
     # generate plot
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    plot_groupedbar(ax, plotlist)
+    plot_groupedbar(ax, plotlist, errbar=True)
 
     plt.title("conformer-averaged wall-clock times", fontsize=16)
     plt.ylabel("time (s)", fontsize=14)
