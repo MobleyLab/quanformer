@@ -103,8 +103,8 @@ def plot_groupedbar(ax, dpoints):
     Function modified from Peter Kerpedjiev.
     http://emptypipes.org/2013/11/09/matplotlib-multicategory-barchart/
 
-    Create a barchart for data across different categories with
-    multiple conditions for each category.
+    Create a barchart for data across different x_labels with
+    multiple color_labels for each x_label.
 
     Parameters
     ----------
@@ -113,34 +113,34 @@ def plot_groupedbar(ax, dpoints):
 
     """
 
-    # Aggregate the conditions and the categories according to their
+    # Aggregate the color_labels and the x_labels according to their
     # mean values
-    conditions = [(c, np.mean(dpoints[dpoints[:, 0] == c][:, 2].astype(float))) for c in np.unique(dpoints[:, 0])]
-    categories = [(c, np.mean(dpoints[dpoints[:, 1] == c][:, 2].astype(float))) for c in np.unique(dpoints[:, 1])]
+    color_labels = [(c, np.mean(dpoints[dpoints[:, 0] == c][:, 2].astype(float))) for c in np.unique(dpoints[:, 0])]
+    x_labels = [(c, np.mean(dpoints[dpoints[:, 1] == c][:, 2].astype(float))) for c in np.unique(dpoints[:, 1])]
 
-    # sort the conditions, categories and data so that the bars in
-    # the plot will be ordered by category and condition
-    conditions = [c[0] for c in sorted(conditions, key=o.itemgetter(1))]
-    categories = [c[0] for c in sorted(categories, key=o.itemgetter(1))]
+    # sort the color_labels, x_labels and data so that the bars in
+    # the plot will be ordered by x_category and color_label
+    color_labels = [c[0] for c in sorted(color_labels, key=o.itemgetter(1))]
+    x_labels = [c[0] for c in sorted(x_labels, key=o.itemgetter(1))]
 
-    dpoints = np.array(sorted(dpoints, key=lambda x: categories.index(x[1])))
+    dpoints = np.array(sorted(dpoints, key=lambda x: x_labels.index(x[1])))
 
     # the space between each set of bars
     space = 0.3
-    n = len(conditions)
-    width = (1 - space) / (len(conditions))
+    n = len(color_labels)
+    width = (1 - space) / (len(color_labels))
 
     # Create a set of bars at each position
-    for i, cond in enumerate(conditions):
-        indices = range(len(categories))
-        #indices = range(1, len(categories)+1)
+    for i, cond in enumerate(color_labels):
+        indices = range(len(x_labels))
+        #indices = range(1, len(x_labels)+1)
         vals = dpoints[dpoints[:, 0] == cond][:, 2].astype(np.float)
         pos = [j - (1 - space) / 2. + i * width for j in indices]
         ax.bar(pos, vals, width=width, label=cond, color=cm.Accent(float(i) / n))
 
-    # Set the x-axis tick labels to be equal to the categories
+    # Set the x-axis tick labels to be equal to the x_labels
     ax.set_xticks(indices)
-    ax.set_xticklabels(categories)
+    ax.set_xticklabels(x_labels)
     plt.setp(plt.xticks()[1], rotation=50)
 
     # Add a legend
@@ -391,9 +391,9 @@ def normalized_deviation(enelist):
 
 def rmsd_two_files(dict1, dict2):
     """
-    From the files in input dictionaries, read in molecules, extract information
-    from SD tags, compute relative conformer energies wrt to the first conformer
-    per molecule, then calculate RMSD of energies wrt reference data.
+    From files in input dictionaries, read in molecules, extract information
+    from SD tags, compute relative conformer energies wrt to first conformer
+    of each molecule, and calculate RMSD of energies wrt reference data.
 
     Parameters
     ----------
@@ -428,11 +428,7 @@ def rmsd_two_files(dict1, dict2):
     reference_enes = []
     compared_enes = []
 
-    # load molecules and parse method information
-    mols1 = reader.read_mols(dict1['fname'])
-    mols2 = reader.read_mols(dict2['fname'])
-
-    # extract energies all mols of each file
+    # load molecules and extract data
     mols1_titles, mols1_indices, mols1_enes, mols1_nans = extract_enes(dict1)
     mols2_titles, mols2_indices, mols2_enes, mols2_nans = extract_enes(dict2)
 
