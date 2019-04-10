@@ -54,12 +54,11 @@ def test_filter_confs():
     os.remove(os.path.join(os.getcwd(), 'numConfs.txt')) # don't use mydir here
 
 def test_filter_confs_exists():
-    try:
+    with pytest.raises(FileExistsError):
         filter_confs(
             os.path.join(mydir, 'data_tests', 'two_alkanes_prefilt.sdf'), 'MM Szybki SD Energy',
             os.path.join(mydir, 'data_tests', 'two_alkanes_prefilt.sdf'))
-    except FileExistsError:
-        assert True
+    assert True
 
 def test_filter_confs_unfinished():
     filter_confs(

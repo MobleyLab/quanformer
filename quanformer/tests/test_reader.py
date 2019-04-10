@@ -17,10 +17,9 @@ def test_read_mols():
     assert len(list(mols)) == 2
 
 def test_read_mols_fail():
-    try:
+    with pytest.raises(FileNotFoundError):
         mols = read_mols(os.path.join(mydir, 'data_tests', 'blah.sdf'))
-    except FileNotFoundError:
-        assert True
+    assert True
 
 #def test_read_text_input():
 #    mols = read_mols(os.path.join(mydir, 'data_tests', 'survey_confs', 'stitch.in'))

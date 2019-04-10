@@ -25,11 +25,10 @@ def test_name_manager_pass():
     assert no_path_infile == 'two_alkanes.smi'
 
 def test_name_manager_fail():
-    try:
+    with pytest.raises(FileNotFoundError):
         curr_dir, checked_infile, prefix, ext, no_path_infile = name_manager(
             os.path.join(mydir, 'data_tests', 'blah.sdf'))
-    except FileNotFoundError:
-        assert True
+    assert True
 
 def test_setup_conformers():
     setup_conformers(os.path.join(mydir, 'data_tests', 'two_alkanes.smi'))
@@ -52,10 +51,9 @@ def test_setup_conformers():
     os.remove(os.path.join(mydir, 'numConfs.txt'))
 
 def test_setup_conformers_ext():
-    try:
+    with pytest.raises(ValueError):
         setup_conformers(os.path.join(mydir, 'data_tests', 'methane_c2p.sdf'))
-    except ValueError:
-        assert True
+    assert True
 
 def test_setup_calculations_true():
     setup_calculations(
@@ -68,14 +66,13 @@ def test_setup_calculations_true():
     shutil.rmtree('methane')
 
 def test_setup_calculations_false():
-    try:
+    with pytest.raises(ValueError):
         setup_calculations(
             os.path.join(mydir, 'data_tests', 'methane_c2p.sdf'),
             'mp2',
             'def2-sv(p)',
             'blah')
-    except ValueError:
-        assert True
+    assert True
 
 def test_process_results():
     process_results(os.path.join(mydir, 'data_tests', 'gbi-200.sdf'), 'opt')

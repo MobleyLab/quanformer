@@ -48,10 +48,9 @@ def test_get_sd_list():
 def test_get_sd_list_fail():
     mols = read_mol(os.path.join(mydir, 'data_tests', 'two_alkanes_prefilt.sdf'), True)
     mol = next(mols)
-    try:
+    with pytest.raises(NameError):
         data = get_sd_list(mol, "blah")
-    except ValueError:
-        assert True
+    assert True
 
 def test_set_sd_tags_hess():
     mol = read_mol(os.path.join(mydir, 'data_tests', 'methane_c2p.sdf'))

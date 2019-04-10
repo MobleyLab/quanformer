@@ -127,18 +127,16 @@ def test_getPsiOne():
 
 def test_get_psi_results_exists():
     infile = os.path.join(mydir,'data_tests','methane_c2p.sdf')
-    try:
+    with pytest.raises(FileExistsError):
         m, b = get_psi_results(infile, infile, calctype='opt', psiout="output.dat", timeout="timer.dat")
-    except FileExistsError:
-        assert True
+    assert True
 
 def test_get_psi_results_calctype():
     infile = os.path.join(mydir,'data_tests','methane_c2p.sdf')
     outfile = os.path.join(mydir,'data_tests','methane_c2p-210.sdf')
-    try:
+    with pytest.raises(ValueError):
         m, b = get_psi_results(infile, outfile, calctype='blah', psiout="output.dat", timeout="timer.dat")
-    except ValueError:
-        assert True
+    assert True
 
 
 def test_get_psi_results_spe():

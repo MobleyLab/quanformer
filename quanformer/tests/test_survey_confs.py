@@ -17,6 +17,8 @@ from quanformer.survey_confs import *
 
 # -----------------------
 
+# TODO ADD FILE CHECKS!!
+
 def test_survey_times():
     survey_confs(
         os.path.join(mydir, 'data_tests', 'survey_confs', 'stitch_time.in'),
@@ -29,7 +31,7 @@ def test_survey_times():
     os.remove('rename_me.png')
 
 def test_survey_times_wrongtag():
-    try:
+    with pytest.raises(NameError):
         survey_confs(
             os.path.join(mydir, 'data_tests', 'survey_confs', 'stitch_wrongtag.in'),
             analyze_energies=False,
@@ -37,9 +39,8 @@ def test_survey_times_wrongtag():
             ref_index=None,
             plot_enes=False
         )
-    except ValueError:
-        os.remove('timeAvgs.txt')
-        assert True
+    os.remove('timeAvgs.txt')
+    assert True
 
 def test_survey_energies():
     survey_confs(
