@@ -19,7 +19,7 @@ import operator as o
 from scipy import stats
 
 import matplotlib as mpl
-#mpl.use("Agg")  # for Mac OS X error of NSInvalidArgumentException
+mpl.use("Agg")  # for Mac OS X error of NSInvalidArgumentException
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
