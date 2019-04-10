@@ -41,7 +41,7 @@ def define_tag(datum, package, method, basisset):
     try:
         taglabel = tagdict[datum]
     except KeyError as exc:
-        raise ValueError("Error in defining string to extract SD data for "
+        raise NameError("Error in defining string to extract SD data for "
             f"[ {datum} ]. Please verify that the key for define_tag is one of: ",
             tagdict.keys()) from exc
 
