@@ -1,6 +1,36 @@
 Installing quanformer
 ====================
 
+Anaconda
+--------
+
+1. Install `Miniconda <https://docs.conda.io/en/latest/miniconda.html>`_ (or Anaconda) with Python 3.6 (version 3.7 is not yet tested).
+
+2. Create a conda environment for **quanformer**::
+
+    conda create --name quanformer python=3.6
+    conda activate quanformer
+
+3. Obtain dependencies for Psi4 (including DFTD3 and gCP) and OpenEye::
+
+    conda install -c psi4 psi4 dftd3 gcp
+    conda install -c openeye openeye-toolkits
+
+4. Check installations.
+
+    a. Psi4::
+
+        psi4 --test
+
+    b. OpenEye (in interactive Python session)::
+
+        import openeye.oechem as oechem
+        mol = oechem.OEMol()
+
+
+Quanformer
+----------
+ 
 Install **quanformer** from source by the following:
 
 
@@ -9,16 +39,11 @@ Install **quanformer** from source by the following:
     git clone https://github.com/MobleyLab/quanformer
     cd quanformer
 
-2. If you wish to install this package into a new conda environment::
-
-    conda env create -f devtools/conda-envs/quanformer.yaml python=3.6 
-    conda activate quanformer
-
-3. Install::
+2. Install::
 
     python setup.py install
 
-or use ``pip`` for a local install (editable installation)::
+   or use ``pip`` for a local install (editable installation)::
 
     pip install -e .
 

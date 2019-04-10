@@ -390,9 +390,10 @@ def get_psi_results(origsdf,
             if props['missing'] or (calctype == 'opt' and not all(
                     key in props
                     for key in ['numSteps', 'finalEnergy', 'coords'])):
-                print(
-                    "ERROR reading {}\nEither Psi4 job was incomplete OR wrong calctype specified\n"
-                    .format(outf))
+                print(f"ERROR reading {outf}\nEither Psi4 job was incomplete "
+                        "or wrong calctype specified\n")
+                method = None
+                basisset = None
                 continue
 
             # add data to oemol

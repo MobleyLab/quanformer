@@ -127,7 +127,7 @@ def setup_calculations(infile, method, basisset, calctype='opt', mem='5.0 Gb'):
     confs_to_psi.confs_to_psi(checked_infile, method, basisset, calctype, mem)
 
 
-def process_results(infile, calctype='opt', suffix=[]):
+def process_results(infile, calctype='opt', suffix=[], psiout='output.dat'):
     """
     Process Psi4 output files and filter conformers.
 
@@ -169,7 +169,7 @@ def process_results(infile, calctype='opt', suffix=[]):
     # get psi4 results
     print("Getting Psi4 results for %s ..." % (checked_infile))
     method, basisset = get_psi_results.get_psi_results(
-        checked_infile, out_results, calctype=calctype)
+        checked_infile, out_results, calctype=calctype, psiout=psiout)
 
     # only filter structures after opts; spe/hess should not change geoms
     if calctype == 'opt' and None not in [method, basisset]:
