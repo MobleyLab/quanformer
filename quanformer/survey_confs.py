@@ -19,7 +19,7 @@ import operator as o
 from scipy import stats
 
 import matplotlib as mpl
-mpl.use("Agg")  # for Mac OS X error of NSInvalidArgumentException
+#mpl.use("Agg")  # for Mac OS X error of NSInvalidArgumentException
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
@@ -76,7 +76,10 @@ def avg_mol_time(titles, infile, method, basis, tag):
     for mol_i in mols:
 
         # get array of all conformer data of this mol
-        time_array = np.fromiter(pt.get_sd_list(mol_i, tag, 'Psi4', method, basis), dtype=np.float64)
+        try:
+            time_array = np.fromiter(pt.get_sd_list(mol_i, tag, 'Psi4', method, basis), dtype=np.float64)
+        except ValueError:
+            time_array = np.asarray([np.nan])*mol_i.NumConfs()
 
         # exclude conformers for which job did not finish (nan)
         nanIndices = np.argwhere(np.isnan(time_array))
@@ -142,7 +145,7 @@ def plot_groupedbar(ax, labels_data_std, errbar=False):
             ax.bar(pos, vals, width=width, label=cond, color=cm.Accent(float(i) / n))
 
     # Set the x-axis tick labels to be equal to the x_labels
-    indices = [x - 1 for x in indices]  # OPTIONAL, with many labels, may want to finagle
+    #indices = [x - 1 for x in indices]  # OPTIONAL, better placement if many labels
     ax.set_xticks(indices)
     ax.set_xticklabels(x_labels)
     plt.setp(plt.xticks()[1], rotation=50)
@@ -294,7 +297,9 @@ def avg_coeffvar(enelist):
 
     Returns
     -------
-    TODO
+    spread_by_mol : list
+        len(spread_by_mol) == number of molecules
+        spread_by_mol[i] == avg(CVs(conformer enes from diff methods) of mol i
 
     Notes
     -----
@@ -313,7 +318,7 @@ def avg_coeffvar(enelist):
     for i, mols_ene in enumerate(enelist):
         cvlist = []
 
-        # check that average is not zero, probably bc single conformer
+        # check that at least two conformers exist
         num_confs = mols_ene[0].shape[0]
         if num_confs <= 1:
             print(f"skipping molecule {i} since only 0 or 1 conformer")
@@ -596,11 +601,12 @@ def survey_energies(wholedict, outfn='relene.dat'):
     -------
     wholedict : OrderedDict
         same as input wholedict with additional keys:
-        'titleMols' 'stdevs' 'confNums' 'compared_enes'
+        'titleMols' 'confNums' 'compared_enes'
 
     """
 
     description = 'relative energies (kcal/mol)'
+    num_files = len(wholedict)
 
     # Write description in output file.
     compF = open(outfn, 'w')
@@ -612,8 +618,7 @@ def survey_energies(wholedict, outfn='relene.dat'):
     enelist = []
     idxlist = []
     nanlist = []
-    for i in range(len(wholedict)):
-
+    for i in range(num_files):
         print("Extracting data for file: %s" % wholedict[i]['fname'])
         titleMols, confNums, compared_enes, confNans = extract_enes(wholedict[i])
         enelist.append(compared_enes)
@@ -621,16 +626,45 @@ def survey_energies(wholedict, outfn='relene.dat'):
         nanlist.append(confNans)
         wholedict[i]['titleMols'] = titleMols
 
+    print("Removing mols missing from 1+ files...")
+    # find molecules common in all files
+    molname_sets = [set(wholedict[x]['titleMols']) for x in range(num_files)]
+    molname_common = set.intersection(*molname_sets)
+
+    for i in range(num_files):
+        # find the extraneous mols in this file
+        mols_in_file = wholedict[i]['titleMols']
+        mols_extraneous = list(set(mols_in_file) - molname_common)
+
+        # get indices of mols to be removed for this file
+        removal_idx = []
+        for molname in mols_extraneous:
+            removal_idx.append(mols_in_file.index(molname))
+        for index in sorted(removal_idx, reverse=True):
+            print(f"  Removing {wholedict[i]['titleMols'][index]} from {wholedict[i]['fname']}")
+            del wholedict[i]['titleMols'][index]
+            del enelist[i][index]
+            del idxlist[i][index]
+            del nanlist[i][index]
+
     print("Removing un-finished conformers and computing relative energies...")
     idxlist, enelist = remove_dead_conformers(enelist, idxlist, nanlist)
     relenelist = relative_energies(enelist)
-    for i in range(len(wholedict)):
+    for i in range(num_files):
         wholedict[i]['compared_enes'] = relenelist[i]
         wholedict[i]['confNums'] = idxlist[i]
 
-    # estimate spread of data
-    spreadlist = avg_coeffvar(relenelist)
-    #spreadlist = normalized_deviation(relenelist)
+    # check that entire array is not zero, if ALL mols have one conf
+    all_zeros = np.all(np.asarray(relenelist)==0)
+    if all_zeros:
+        print("WARNING: All relative energy values are zero. "
+            "Cannot calculate energy spread.")
+        spreadlist = [-1]*len(relenelist[0])
+    else:
+        # estimate spread of data
+        spreadlist = avg_coeffvar(relenelist)
+        #spreadlist = normalized_deviation(relenelist)
+
 
     # loop over each mol and write energies from wholedict by column
     for m in range(len(wholedict[1]['titleMols'])):
@@ -645,7 +679,7 @@ def survey_energies(wholedict, outfn='relene.dat'):
         # for this mol, write the compared_enes from each file by columns
         for c in range(len(wholedict[1]['confNums'][m])):
             line = '\n' + str(wholedict[1]['confNums'][m][c]) + '\t'
-            for i in range(len(wholedict)):
+            for i in range(num_files):
                 line += (str(wholedict[i]['compared_enes'][m][c]) + '\t')
             compF.write(line)
 
@@ -699,8 +733,11 @@ def survey_times(wholedict):
         if len(t) != m:
             tracker.append(i)
     for index in sorted(tracker, reverse=True):
+        mol_name = list(titles.keys())[index]
+        print(f"removing {mol_name} from time analysis")
         del timeplot[index]
         del stdplot[index]
+        del titles[mol_name]
 
     # prepare plot data
     timeplot = np.asarray(timeplot)
@@ -740,7 +777,7 @@ def survey_times(wholedict):
     plt.show()
 
 
-def survey_confs(infile, analyze_energies=True, analyze_times=True, ref_index=None, plot_enes=True):
+def survey_confs(infile, analyze_energies=False, analyze_times=False, ref_index=None, plot_enes=True):
     """
     Main interface to survey_times, survey_energies, or survey_energies_ref.
 
@@ -767,6 +804,9 @@ def survey_confs(infile, analyze_energies=True, analyze_times=True, ref_index=No
 
     wholedict = reader.read_text_input(infile)
 
+    if (analyze_energies == analyze_times):
+        raise ValueError("Please specify ONE of analyze_energies or analyze_times")
+
     if analyze_times:
         survey_times(wholedict)
 
@@ -775,5 +815,6 @@ def survey_confs(infile, analyze_energies=True, analyze_times=True, ref_index=No
             wholedict = survey_energies(wholedict)
         else:
             wholedict = survey_energies_ref(wholedict, ref_index)
-        if plot_enes:
-            arrange_and_plot(wholedict, "RMSDs of relative conformer energies")
+            # TODO move this part inside the survey_energies fx
+            if plot_enes:
+                arrange_and_plot(wholedict, "RMSDs of relative conformer energies")
