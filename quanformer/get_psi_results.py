@@ -357,8 +357,7 @@ def get_psi_results(origsdf,
     writeout = os.path.join(wdir, finsdf)
     write_ofs = oechem.oemolostream()
     if os.path.exists(writeout):
-        print("File already exists: %s. Skip getting results.\n" % (finsdf))
-        return (None, None)
+        raise FileExistsError(f"File already exists: {finsdf}\n")
     if not write_ofs.open(writeout):
         oechem.OEThrow.Fatal("Unable to open %s for writing" % writeout)
 
