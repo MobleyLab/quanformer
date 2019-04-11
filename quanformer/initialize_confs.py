@@ -207,17 +207,17 @@ def initialize_confs(smiles, resolve_clash=True, do_opt=True):
             print(mol.GetTitle(), i + 1)
             ### Resolve bad clashes.
             if resolve_clash:
-                print("Resolving bad clashes...")
+                print("  Resolving bad clashes...")
                 if not resolve_clashes(conf, "numClashes.txt"):
-                    print('Resolving bad clashes failed for molecule %s \
-conformer %d:' % (mol.GetTitle(), i + 1))
+                    print('  Resolving bad clashes failed for molecule '
+                        f'{mol.GetTitle()} conformer {i+1}')
                     continue
             ### MM optimization.
             if do_opt:
-                print("Doing a quick MM (SD) optimization...")
+                print("  Doing a quick MM (SD) optimization...")
                 if not quick_opt(conf):
-                    print('Quick optimization failed for molecule %s \
-conformer %d:' % (mol.GetTitle(), i + 1))
+                    print('  Quick optimization failed for molecule '
+                        f'{mol.GetTitle()} conformer {i+1}')
                     continue
         oechem.OEWriteConstMolecule(ofs, mol)
 

@@ -15,6 +15,8 @@ By: Victoria T. Lim
 
 
 import os
+import warnings
+
 import openeye.oechem as oechem
 import quanformer.reader as reader
 
@@ -41,6 +43,10 @@ def identify_minima(mol, tag, ThresholdE, ThresholdRMSD):
         one conf and it didn't optimize, or something else funky.
 
     """
+    # suppress OERMSD warning
+    level = oechem.OEThrow.GetLevel()
+    oechem.OEThrow.SetLevel(oechem.OEErrorLevel_Error)
+
     # Parameters for OpenEye RMSD calculation
     automorph = True
     heavyOnly = False
@@ -61,8 +67,8 @@ def identify_minima(mol, tag, ThresholdE, ThresholdRMSD):
 
     # Loop over conformers twice (NxN diagonal comparison of RMSDs)
     for confRef in mol.GetConfs():
-        print(" ~ Reference: %s conformer %d" % (mol.GetTitle(),
-                                                 confRef.GetIdx() + 1))
+        print(" ~ Matching conformers to reference: "
+              f"{mol.GetTitle()} conf {confRef.GetIdx() + 1}")
 
         # get real tag (correct for capitalization)
         for x in oechem.OEGetSDDataPairs(confRef):
@@ -111,6 +117,9 @@ def identify_minima(mol, tag, ThresholdE, ThresholdRMSD):
             # if measured_RMSD < threshold_RMSD --> confs are same --> delete
             if rmsd < ThresholdRMSD:
                 confsToDel.add(confTest.GetIdx())
+
+    # reset oechem warning level
+    oechem.OEThrow.SetLevel(level)
 
     # for the same molecule, delete tagged conformers
     print("%s original number of conformers: %d" % (mol.GetTitle(),
