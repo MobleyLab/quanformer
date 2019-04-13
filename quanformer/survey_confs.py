@@ -767,7 +767,7 @@ def survey_times(wholedict):
     # generate plot
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    plot_groupedbar(ax, plotlist, errbar=True)
+    plot_groupedbar(ax, plotlist)
 
     plt.title("conformer-averaged wall-clock times", fontsize=16)
     plt.ylabel("time (s)", fontsize=14)
