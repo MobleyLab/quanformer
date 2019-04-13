@@ -47,7 +47,7 @@ def define_tag(datum, package, method, basisset):
 
     return taglabel
 
-def get_sd_list(mol, datum, package='Psi4', method=None, basisset=None):
+def get_sd_list(mol, datum, package='Psi4', method=None, basisset=None, taglabel=None):
     """
     Get list of specified SD tag for all confs in mol.
 
@@ -59,13 +59,16 @@ def get_sd_list(mol, datum, package='Psi4', method=None, basisset=None):
     package:    software package used for QM calculation. Psi4 or Turbomole.
     method:     string, for specific properties. e.g. 'mp2'
     basisset:   string, for specific properties. e.g. '6-31+G(d)'
+    taglabel : string
+        exact tag string from which to extract SD data
 
     Returns
     -------
     sdlist: A 1D N-length list for N conformers with property from SDTag.
     """
 
-    taglabel = define_tag(datum, package, method, basisset)
+    if taglabel is None:
+        taglabel = define_tag(datum, package, method, basisset)
 
     sd_list = []
     for j, conf in enumerate(mol.GetConfs()):
