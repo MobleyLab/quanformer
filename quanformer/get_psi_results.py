@@ -125,6 +125,9 @@ def get_psi_time(filename):
         for line in fname:
             if "Wall Time:" in line:
                 times.append(float(line.split()[2]))
+    if len(times) == 0:
+        # happens if timer.dat is empty
+        raise IOError(f"Error reading time from {filename}")
     time = sum(times) / float(len(times))
 
     return time
