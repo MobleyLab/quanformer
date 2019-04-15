@@ -7,6 +7,11 @@ Basic plots (lines or bars) of information in SD tags.
 Version:    Apr 12 2019
 By:         Victoria T. Lim
 
+
+TODO:
+- plot same tag from multiple files (plotMultSDF.py) (http://tinyurl.com/yy62nqqt)
+- plot diff tags in same file
+
 """
 import numpy as np
 

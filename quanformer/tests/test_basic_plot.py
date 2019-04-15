@@ -13,7 +13,7 @@ mydir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(os.path.dirname(__file__), 'helpers'))
 from helper import *
 
-#from quanformer.basic_plot import *
+from quanformer.basic_plot import *
 
 # -----------------------
 
@@ -29,7 +29,7 @@ def test_survey_energies_plot():
 
 
 # test manually without pytest
-if 1:
+if 0:
     sys.path.insert(0, '/home/limvt/Documents/quanformer/quanformer')
     from basic_plot import *
     test_survey_energies_plot()
