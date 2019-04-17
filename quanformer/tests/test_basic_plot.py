@@ -15,6 +15,9 @@ from helper import *
 
 from quanformer.basic_plot import *
 
+import matplotlib as mpl
+mpl.use("Agg")  # for Mac OS X error of NSInvalidArgumentException on Travis CI
+
 # -----------------------
 
 

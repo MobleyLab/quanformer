@@ -16,8 +16,6 @@ TODO:
 import numpy as np
 
 import matplotlib.pyplot as plt
-import matplotlib
-matplotlib.use("Agg")  # for Mac OS X error of NSInvalidArgumentException
 
 import quanformer.proc_tags as pt
 import quanformer.reader as reader

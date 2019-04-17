@@ -15,6 +15,9 @@ from helper import *
 
 from quanformer.survey_confs import *
 
+import matplotlib as mpl
+#mpl.use("Agg")  # for Mac OS X error of NSInvalidArgumentException on Travis CI
+
 # -----------------------
 
 # TODO ADD FILE CHECKS!!
@@ -79,4 +82,4 @@ def test_survey_energies_plot():
 if 0:
     sys.path.insert(0, '/home/limvt/Documents/quanformer/quanformer')
     from survey_confs import *
-    test_survey_energies_plot()
+    test_survey_times()
