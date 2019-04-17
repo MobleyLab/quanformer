@@ -16,6 +16,15 @@ def test_read_mols():
     mols = read_mols(os.path.join(mydir, 'data_tests', 'two_alkanes_prefilt.sdf'))
     assert len(list(mols)) == 2
 
+def test_read_mols_slice():
+    mols = read_mols(
+        os.path.join(mydir, 'data_tests', 'two_alkanes_prefilt.sdf'),
+        mol_slice=[0,1,1])
+    mlist = list(mols)
+    assert len(mlist) == 1
+    assert mlist[0].GetTitle() == 'AlkEthOH_c312'
+    assert mlist[0].NumConfs() == 9
+
 def test_read_mols_fail():
     with pytest.raises(FileNotFoundError):
         mols = read_mols(os.path.join(mydir, 'data_tests', 'blah.sdf'))

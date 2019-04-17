@@ -18,8 +18,6 @@ import numpy as np
 import operator as o
 from scipy import stats
 
-import matplotlib as mpl
-mpl.use("Agg")  # for Mac OS X error of NSInvalidArgumentException
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
@@ -33,7 +31,7 @@ def separated_theory(theory):
     return qmethod, qbasis
 
 
-def avg_mol_time(titles, infile, method, basis, tag):
+def avg_mol_time(titles, infile, method, basis, tag, mol_slice):
     """
     For an SDF file with all confs of all mols, get the average runtime
         of all conformers for each molecule.
@@ -56,6 +54,9 @@ def avg_mol_time(titles, infile, method, basis, tag):
     tag : string
         datum of interest, e.g., "QM opt energy"
         See keys in the define_tag function of proc_tags module.
+    mol_slice : list
+        list of indices from which to slice mols generator for read_mols
+        [start, stop, step]
 
     Returns
     -------
@@ -66,7 +67,11 @@ def avg_mol_time(titles, infile, method, basis, tag):
     """
 
     # Open molecule file.
-    mols = reader.read_mols(infile)
+    if len(mol_slice) == 3:
+        mols = reader.read_mols(infile, mol_slice)
+    else:
+        mols = reader.read_mols(infile)
+
 
     # Prepare text file to write extracted data.
     timeF = open("timeAvgs.txt", 'a')
@@ -101,9 +106,6 @@ def avg_mol_time(titles, infile, method, basis, tag):
 
 def plot_groupedbar(ax, labels_data_std, errbar=False):
     """
-    *** TODO add error bars ***
-
-
     Function modified from Peter Kerpedjiev.
     http://emptypipes.org/2013/11/09/matplotlib-multicategory-barchart/
 
@@ -116,7 +118,6 @@ def plot_groupedbar(ax, labels_data_std, errbar=False):
     labels_data_std: The data set as an (n, 3) numpy array
 
     """
-
     # Aggregate the color_labels and the x_labels according to their mean values
     color_labels = [(c, np.mean(labels_data_std[labels_data_std[:, 0] == c][:, 2].astype(float))) for c in np.unique(labels_data_std[:, 0])]
     x_labels = [(c, np.mean(labels_data_std[labels_data_std[:, 1] == c][:, 2].astype(float))) for c in np.unique(labels_data_std[:, 1])]
@@ -125,7 +126,6 @@ def plot_groupedbar(ax, labels_data_std, errbar=False):
     # the plot will be ordered by x_category and color_label
     color_labels = [c[0] for c in sorted(color_labels, key=o.itemgetter(1))]
     x_labels = [c[0] for c in sorted(x_labels, key=o.itemgetter(1))]
-
     labels_data_std = np.array(sorted(labels_data_std, key=lambda x: x_labels.index(x[1])))
 
     # the space between each set of bars
@@ -134,15 +134,25 @@ def plot_groupedbar(ax, labels_data_std, errbar=False):
     width = (1 - space) / (len(color_labels))
     indices = range(len(x_labels))
 
+    # set color cycle
+    if n < 9:
+        ax.set_prop_cycle(plt.cycler('color', plt.cm.Accent(np.linspace(0, 1, n))))
+    elif n < 11:
+        ax.set_prop_cycle(plt.cycler('color', plt.cm.tab10(np.linspace(0, 1, n))))
+    elif n < 13:
+        ax.set_prop_cycle(plt.cycler('color', plt.cm.Paired(np.linspace(0, 1, n))))
+    else:
+        ax.set_prop_cycle(plt.cycler('color', plt.cm.tab20(np.linspace(0, 1, n))))
+
     # Create a set of bars at each position
     for i, cond in enumerate(color_labels):
         vals = labels_data_std[labels_data_std[:, 0] == cond][:, 2].astype(np.float)
         pos = [j - (1 - space) / 2. + i * width for j in indices]
         if errbar:
             stds = labels_data_std[labels_data_std[:, 0] == cond][:, 3].astype(np.float)
-            ax.bar(pos, vals, yerr=stds, width=width, label=cond, color=cm.Accent(float(i) / n))
+            ax.bar(pos, vals, yerr=stds, width=width, label=cond)
         else:
-            ax.bar(pos, vals, width=width, label=cond, color=cm.Accent(float(i) / n))
+            ax.bar(pos, vals, width=width, label=cond)
 
     # Set the x-axis tick labels to be equal to the x_labels
     #indices = [x - 1 for x in indices]  # OPTIONAL, better placement if many labels
@@ -688,7 +698,7 @@ def survey_energies(wholedict, outfn='relene.dat'):
     return wholedict
 
 
-def survey_times(wholedict):
+def survey_times(wholedict, mol_slice):
     """
     Average all conformers' calculations times for each molecule in each file.
     Generate grouped bar plot where x=QM method, y=time(s). Molecules are
@@ -699,6 +709,9 @@ def survey_times(wholedict):
     wholedict : OrderedDict
         ordered dictionary of input files and information to extract from SD tags
         keys are: 'theory' 'fname' 'tagkey' 'label'
+    mol_slice : list
+        list of indices from which to slice mols generator for read_mols
+        [start, stop, step]
 
     """
 
@@ -711,7 +724,7 @@ def survey_times(wholedict):
     for i in wholedict:
         qmethod, qbasis = separated_theory(wholedict[i]['theory'])
         qtag = wholedict[i]['tagkey']
-        titles = avg_mol_time(titles, wholedict[i]['fname'], qmethod, qbasis, qtag)
+        titles = avg_mol_time(titles, wholedict[i]['fname'], qmethod, qbasis, qtag, mol_slice)
 
     # extract data in dictionary to arrays
     for mol in titles.values():
@@ -777,7 +790,7 @@ def survey_times(wholedict):
     plt.show()
 
 
-def survey_confs(infile, analyze_energies=False, analyze_times=False, ref_index=None, plot_enes=True):
+def survey_confs(infile, analyze_energies=False, analyze_times=False, ref_index=None, plot_enes=True, mol_slice=[]):
     """
     Main interface to survey_times, survey_energies, or survey_energies_ref.
 
@@ -796,6 +809,9 @@ def survey_confs(infile, analyze_energies=False, analyze_times=False, ref_index=
         line numbers start at ZERO and do not count commented lines
     plot_enes : Boolean
         generate plot for energies analysis
+    mol_slice : list
+        list of indices from which to slice mols generator for read_mols
+        [start, stop, step]
 
     """
 
@@ -808,7 +824,7 @@ def survey_confs(infile, analyze_energies=False, analyze_times=False, ref_index=
         raise ValueError("Please specify ONE of analyze_energies or analyze_times")
 
     if analyze_times:
-        survey_times(wholedict)
+        survey_times(wholedict, mol_slice)
 
     if analyze_energies:
         if ref_index is None:
@@ -816,5 +832,6 @@ def survey_confs(infile, analyze_energies=False, analyze_times=False, ref_index=
         else:
             wholedict = survey_energies_ref(wholedict, ref_index)
             # TODO move this part inside the survey_energies fx
+            # TODO add mol_slice parameter to survey_energies* functions
             if plot_enes:
                 arrange_and_plot(wholedict, "RMSDs of relative conformer energies")

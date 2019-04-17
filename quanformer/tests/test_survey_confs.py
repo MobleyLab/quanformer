@@ -16,7 +16,7 @@ from helper import *
 from quanformer.survey_confs import *
 
 import matplotlib as mpl
-#mpl.use("Agg")  # for Mac OS X error of NSInvalidArgumentException on Travis CI
+mpl.use("Agg")  # for Mac OS X error of NSInvalidArgumentException on Travis CI
 
 # -----------------------
 

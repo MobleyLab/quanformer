@@ -11,9 +11,10 @@ By:         Victoria T. Lim
 
 import openeye.oechem as oechem
 import collections  # ordered dictionary
+import itertools
 
 
-def read_mols(infile):
+def read_mols(infile, mol_slice=None):
     """
     Open a molecule file and return molecules and conformers as OEMols.
 
@@ -21,6 +22,9 @@ def read_mols(infile):
     ----------
     infile : string
         name of input file with molecules
+    mol_slice : list
+        list of indices from which to slice mols generator for read_mols
+        [start, stop, step]
 
     Returns
     -------
@@ -33,6 +37,8 @@ def read_mols(infile):
     if not ifs.open(infile):
         raise FileNotFoundError(f"Unable to open {infile} for reading")
     mols = ifs.GetOEMols()
+    if mol_slice is not None:
+        mols = itertools.islice(mols, mol_slice[0], mol_slice[1], mol_slice[2])
 
     return mols
 
