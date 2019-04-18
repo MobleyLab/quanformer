@@ -26,7 +26,7 @@ def define_tag(datum, package, method, basisset):
             package, method, basisset),
         "QM opt energy initial": "QM {} Initial Opt. Energy (Har) {}/{}".format(
             package, method, basisset),
-        "QM spe": "QM {} Single Pt. Energy (Har) {}/{}".format(
+        "QM spe": "QM {} Final Single Pt. Energy (Har) {}/{}".format(
             package, method, basisset),
         "QM spe scs": "QM {} Single Pt. Energy (Har) SCS-{}/{}".format(
             package, method, basisset),
