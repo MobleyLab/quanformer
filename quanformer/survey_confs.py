@@ -31,7 +31,7 @@ def separated_theory(theory):
     return qmethod, qbasis
 
 
-def avg_mol_time(titles, infile, method, basis, tag, mol_slice):
+def avg_mol_time(titles, infile, method, basis, tag, mol_slice=[]):
     """
     For an SDF file with all confs of all mols, get the average runtime
         of all conformers for each molecule.
@@ -155,7 +155,8 @@ def plot_groupedbar(ax, labels_data_std, errbar=False):
             ax.bar(pos, vals, width=width, label=cond)
 
     # Set the x-axis tick labels to be equal to the x_labels
-    #indices = [x - 1 for x in indices]  # OPTIONAL, better placement if many labels
+    if len(indices) > 7: # adjust int as needed for better placement of many labels
+        indices = [x - 1 for x in indices]
     ax.set_xticks(indices)
     ax.set_xticklabels(x_labels)
     plt.setp(plt.xticks()[1], rotation=50)
@@ -206,7 +207,7 @@ def arrange_and_plot(wholedict, ptitle):
     plt.show()
 
 
-def extract_enes(dict1):
+def extract_enes(dict1, mol_slice=[]):
     """
     From files in input dictionaries, read in molecules, extract information
     from SD tags for conformer energies and indices.
@@ -216,6 +217,9 @@ def extract_enes(dict1):
     dict1 : dict
         dictionary of input files and information to extract from SD tags
         keys are: 'theory' 'fname' 'tagkey' 'label'
+    mol_slice : list
+        list of indices from which to slice mols generator for read_mols
+        [start, stop, step]
 
     Returns
     -------
@@ -230,7 +234,12 @@ def extract_enes(dict1):
 
     """
 
-    mols = reader.read_mols(dict1['fname'])
+    # Open molecule file.
+    if len(mol_slice) == 3:
+        mols = reader.read_mols(dict1['fname'], mol_slice)
+    else:
+        mols = reader.read_mols(dict1['fname'])
+
     short_tag = dict1['tagkey']
     qmethod, qbasis = separated_theory(dict1['theory'])
 
@@ -296,20 +305,28 @@ def relative_energies(enelist):
 
 def avg_coeffvar(enelist):
     """
-    For the relative energies of a single conformer, compute coefficient of
+    For the ABSOLUTE energies of a single conformer, compute coefficient of
     variation (CV) across methods. Then average the CVs across all conformers
     for each molecule.
+
+    Note: It is incorrect to compute the coefficient of variation on relative
+        values. See wikipedia for an example on temperature.
+    Note: The units of the input shouldn't matter since the CV is a ratio,
+        meaning that units should cancel.
 
     Parameters
     ----------
     enelist : list of lists
-        enelist[i][j] is relative energy of file i, mol j
+        enelist[i][j] is absolute energy of file i, mol j
 
     Returns
     -------
     spread_by_mol : list
         len(spread_by_mol) == number of molecules
         spread_by_mol[i] == avg(CVs(conformer enes from diff methods) of mol i
+    cvlist_all_mols : list of lists
+        len(cvlist_all_mols) == number of molecules
+        len(cvlist_all_mols[i]) == number of conformers for molecule i minus 1
 
     Notes
     -----
@@ -320,6 +337,7 @@ def avg_coeffvar(enelist):
 
     # 1D list for average of CVs of each mol
     spread_by_mol = []
+    cvlist_all_mols = []
 
     # reshape list so that enelist[i][j] is mol i, file j
     enelist = np.array(enelist).T
@@ -332,7 +350,8 @@ def avg_coeffvar(enelist):
         num_confs = mols_ene[0].shape[0]
         if num_confs <= 1:
             print(f"skipping molecule {i} since only 0 or 1 conformer")
-            spread_by_mol.append('n/a')
+            spread_by_mol.append(np.nan)
+            cvlist_all_mols.append(num_confs*[np.nan])
             continue
 
         # number of files is mols_ene.shape[0]; should be same for all mols
@@ -346,18 +365,11 @@ def avg_coeffvar(enelist):
                 cv = np.std(confs_ene) / np.average(confs_ene)
             cvlist.append(cv)
 
-        # check that first element is 0. bc energies relative to first conf
-        if not np.isnan(cvlist[0]):
-            print("\nWARNING: Check input of avg_coeffvar function."
-                  " First conformers of each mol should have zero relative "
-                  "energies and thus zero standard deviation across files.")
-            return
-        cvlist = np.delete(cvlist, 0)
-
         # average the coeffs of variation
         spread_by_mol.append(np.average(cvlist))
+        cvlist_all_mols.append(cvlist)
 
-    return spread_by_mol
+    return spread_by_mol, cvlist_all_mols
 
 
 def normalized_deviation(enelist):
@@ -408,7 +420,7 @@ def normalized_deviation(enelist):
     return spread_by_mol
 
 
-def rmsd_two_files(dict1, dict2):
+def rmsd_two_files(dict1, dict2, mol_slice=[]):
     """
     From files in input dictionaries, read in molecules, extract information
     from SD tags, compute relative conformer energies wrt to first conformer
@@ -423,6 +435,9 @@ def rmsd_two_files(dict1, dict2):
     dict2 : dict
         dictionary of input files and information to extract from SD tags
         keys are: 'theory' 'fname' 'tagkey' 'label'
+    mol_slice : list
+        list of indices from which to slice mols generator for read_mols
+        [start, stop, step]
 
     Returns
     -------
@@ -448,8 +463,8 @@ def rmsd_two_files(dict1, dict2):
     compared_enes = []
 
     # load molecules and extract data
-    mols1_titles, mols1_indices, mols1_enes, mols1_nans = extract_enes(dict1)
-    mols2_titles, mols2_indices, mols2_enes, mols2_nans = extract_enes(dict2)
+    mols1_titles, mols1_indices, mols1_enes, mols1_nans = extract_enes(dict1, mol_slice)
+    mols2_titles, mols2_indices, mols2_enes, mols2_nans = extract_enes(dict2, mol_slice)
 
     # check that number of molecules exist in both files
     if len(mols1_titles) != len(mols2_titles):
@@ -513,7 +528,7 @@ def rmsd_two_files(dict1, dict2):
 ### ------------------- Script -------------------
 
 
-def survey_energies_ref(wholedict, ref_index, outfn='relene-rmsd.dat'):
+def survey_energies_ref(wholedict, ref_index, mol_slice=[], outfn='relene-rmsd.dat'):
     """
     Compute RMSD of relative conformer energies with respect to the data
     in ref_index spot. The relative energies by conformer are computed first,
@@ -526,6 +541,9 @@ def survey_energies_ref(wholedict, ref_index, outfn='relene-rmsd.dat'):
         keys are: 'theory' 'fname' 'tagkey' 'label'
     ref_index : int
         integer to specify reference file of wholedict[ref_index]
+    mol_slice : list
+        list of indices from which to slice mols generator for read_mols
+        [start, stop, step]
     outfn : str
         name of the output file with RMSDs of energies
 
@@ -554,7 +572,7 @@ def survey_energies_ref(wholedict, ref_index, outfn='relene-rmsd.dat'):
 
         # each of the four returned vars is (file) list of (mols) lists
         titleMols, rmsds, confNums, reference_enes, compared_enes =\
-            rmsd_two_files(wholedict[ref_index], wholedict[i])
+            rmsd_two_files(wholedict[ref_index], wholedict[i], mol_slice)
         wholedict[i]['titleMols'] = titleMols
         wholedict[i]['rmsds'] = rmsds
         wholedict[i]['confNums'] = confNums
@@ -586,7 +604,7 @@ def survey_energies_ref(wholedict, ref_index, outfn='relene-rmsd.dat'):
     return wholedict
 
 
-def survey_energies(wholedict, outfn='relene.dat'):
+def survey_energies(wholedict, mol_slice=[], outfn='relene.dat'):
     """
     Compute the spread of the conformer energies for each molecule in each file.
     The spread can be computed as the coefficient of variation of all methods,
@@ -604,6 +622,9 @@ def survey_energies(wholedict, outfn='relene.dat'):
     wholedict : OrderedDict
         ordered dictionary of input files and information to extract from SD tags
         keys are: 'theory' 'fname' 'tagkey' 'label'
+    mol_slice : list
+        list of indices from which to slice mols generator for read_mols
+        [start, stop, step]
     outfn : str
         name of the output file with RMSDs of energies
 
@@ -615,14 +636,13 @@ def survey_energies(wholedict, outfn='relene.dat'):
 
     """
 
-    description = 'relative energies (kcal/mol)'
     num_files = len(wholedict)
 
     # Write description in output file.
     compF = open(outfn, 'w')
-    compF.write(f"# Spread of {description} over diff QM methods averaged over conformers\n")
+    compF.write(f"# Variability in energies from diff QM methods averaged over conformers\n")
     for i, d in enumerate(wholedict.values()):
-        compF.write("# File %d: %s\n" % (i, d['fname']))
+        compF.write("# File %d: %s\n" % (i+1, d['fname']))
         compF.write("#   calc=%s, %s\n" % (d['tagkey'], d['theory']))
 
     enelist = []
@@ -630,7 +650,7 @@ def survey_energies(wholedict, outfn='relene.dat'):
     nanlist = []
     for i in range(num_files):
         print("Extracting data for file: %s" % wholedict[i]['fname'])
-        titleMols, confNums, compared_enes, confNans = extract_enes(wholedict[i])
+        titleMols, confNums, compared_enes, confNans = extract_enes(wholedict[i], mol_slice)
         enelist.append(compared_enes)
         idxlist.append(confNums)
         nanlist.append(confNans)
@@ -671,8 +691,8 @@ def survey_energies(wholedict, outfn='relene.dat'):
             "Cannot calculate energy spread.")
         spreadlist = [-1]*len(relenelist[0])
     else:
-        # estimate spread of data
-        spreadlist = avg_coeffvar(relenelist)
+        # estimate spread of data on ABSOLUTE energies
+        spreadlist, cvlist_all_mols = avg_coeffvar(enelist)
         #spreadlist = normalized_deviation(relenelist)
 
 
@@ -681,16 +701,20 @@ def survey_energies(wholedict, outfn='relene.dat'):
         compF.write('\n\n# Mol ' + wholedict[1]['titleMols'][m])
 
         # for this mol, write the rmsd from each file side by side
-        line = ' Spread: {}'.format(spreadlist[m])
+        line = ' {:.2f}% averaged CV'.format(spreadlist[m]*100)
         compF.write(line)
         compF.write('\n# ==================================================================')
-        compF.write(f'\n# conf\t{description} in column order by file (listed at top)')
+        compF.write(f'\n# rel enes (kcal/mol), column i = file i, row j = conformer j')
 
         # for this mol, write the compared_enes from each file by columns
         for c in range(len(wholedict[1]['confNums'][m])):
             line = '\n' + str(wholedict[1]['confNums'][m][c]) + '\t'
             for i in range(num_files):
-                line += (str(wholedict[i]['compared_enes'][m][c]) + '\t')
+                line += '{:.4f}\t'.format(wholedict[i]['compared_enes'][m][c])
+
+            # print overall contribution to spread
+            line += '# {:.2f}% CV'.format(cvlist_all_mols[m][c]*100)
+
             compF.write(line)
 
     compF.close()
@@ -698,7 +722,7 @@ def survey_energies(wholedict, outfn='relene.dat'):
     return wholedict
 
 
-def survey_times(wholedict, mol_slice):
+def survey_times(wholedict, mol_slice=[]):
     """
     Average all conformers' calculations times for each molecule in each file.
     Generate grouped bar plot where x=QM method, y=time(s). Molecules are
@@ -828,10 +852,9 @@ def survey_confs(infile, analyze_energies=False, analyze_times=False, ref_index=
 
     if analyze_energies:
         if ref_index is None:
-            wholedict = survey_energies(wholedict)
+            wholedict = survey_energies(wholedict, mol_slice)
         else:
-            wholedict = survey_energies_ref(wholedict, ref_index)
+            wholedict = survey_energies_ref(wholedict, ref_index, mol_slice)
             # TODO move this part inside the survey_energies fx
-            # TODO add mol_slice parameter to survey_energies* functions
             if plot_enes:
                 arrange_and_plot(wholedict, "RMSDs of relative conformer energies")
