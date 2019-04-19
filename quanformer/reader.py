@@ -11,7 +11,7 @@ By:         Victoria T. Lim
 
 import openeye.oechem as oechem
 import collections  # ordered dictionary
-import itertools
+import copy
 
 
 def read_mols(infile, mol_slice=None):
@@ -31,14 +31,50 @@ def read_mols(infile, mol_slice=None):
     mols : OEMols
 
     """
-
     ifs = oechem.oemolistream()
     ifs.SetConfTest(oechem.OEAbsoluteConfTest())
     if not ifs.open(infile):
         raise FileNotFoundError(f"Unable to open {infile} for reading")
     mols = ifs.GetOEMols()
+
     if mol_slice is not None:
-        mols = itertools.islice(mols, mol_slice[0], mol_slice[1], mol_slice[2])
+        if len(mol_slice) != 3 or mol_slice[0] >= mol_slice[1] or mol_slice[2] <= 0:
+            raise ValueError("Check input to mol_slice. Should have len 3, "
+                "start value < stop value, step >= 1.")
+        # TODO more efficient. can't itertools bc lost mol info (name, SD) after next()
+        # adding copy/deepcopy doesnt work on generator objects
+        # also doesn't work to convert generator to list then slice list
+        #mols = itertools.islice(mols, mol_slice[0], mol_slice[1], mol_slice[2])
+        #mlist = mlist[mol_slice[0]:mol_slice[1]:mol_slice[2]]
+
+        def incrementer(count, mols, step):
+            if step == 1:
+                count += 1
+                return count
+            # use step-1 because for loop already increments once
+            for j in range(step-1):
+                count += 1
+                next(mols)
+            return count
+
+        mlist = []
+        count = 0
+        for i, m in enumerate(mols):
+
+            if count >= mol_slice[1]:
+                return mlist
+            elif count < mol_slice[0]:
+                count += 1
+                continue
+            else:
+                # important to append copy else still linked to orig generator
+                mlist.append(copy.copy(m))
+                try:
+                    count = incrementer(count, mols, mol_slice[2])
+                except StopIteration:
+                    return mlist
+
+        return mlist
 
     return mols
 
