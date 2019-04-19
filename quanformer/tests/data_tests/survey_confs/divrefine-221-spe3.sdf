@@ -72,7 +72,7 @@ M  END
 > <QM Psi4 Initial Opt. Energy (Har) mp2/def2-sv(p)>
 -582.148922081
 
-> <QM Psi4 Single Pt. Energy (Har) PBE0/6-311G**>
+> <QM Psi4 Final Single Pt. Energy (Har) PBE0/6-311G**>
 -583.930041889
 
 > <QM Psi4 Single Pt. Runtime (sec) PBE0/6-311G**>
@@ -130,7 +130,7 @@ M  END
 > <QM Psi4 Initial Opt. Energy (Har) mp2/def2-sv(p)>
 -681.968572473
 
-> <QM Psi4 Single Pt. Energy (Har) PBE0/6-311G**>
+> <QM Psi4 Final Single Pt. Energy (Har) PBE0/6-311G**>
 -683.382228604
 
 > <QM Psi4 Single Pt. Runtime (sec) PBE0/6-311G**>
@@ -188,7 +188,7 @@ M  END
 > <QM Psi4 Initial Opt. Energy (Har) mp2/def2-sv(p)>
 -681.968574604
 
-> <QM Psi4 Single Pt. Energy (Har) PBE0/6-311G**>
+> <QM Psi4 Final Single Pt. Energy (Har) PBE0/6-311G**>
 -683.382227839
 
 > <QM Psi4 Single Pt. Runtime (sec) PBE0/6-311G**>
@@ -246,7 +246,7 @@ M  END
 > <QM Psi4 Initial Opt. Energy (Har) mp2/def2-sv(p)>
 -681.96845179
 
-> <QM Psi4 Single Pt. Energy (Har) PBE0/6-311G**>
+> <QM Psi4 Final Single Pt. Energy (Har) PBE0/6-311G**>
 -683.383844783
 
 > <QM Psi4 Single Pt. Runtime (sec) PBE0/6-311G**>
@@ -304,7 +304,7 @@ M  END
 > <QM Psi4 Initial Opt. Energy (Har) mp2/def2-sv(p)>
 -681.96842566
 
-> <QM Psi4 Single Pt. Energy (Har) PBE0/6-311G**>
+> <QM Psi4 Final Single Pt. Energy (Har) PBE0/6-311G**>
 -683.38386584
 
 > <QM Psi4 Single Pt. Runtime (sec) PBE0/6-311G**>

@@ -24,9 +24,9 @@ def test_define_tag():
     tag = define_tag("QM opt energy initial", "Psi4", "mp2", "def2-SV(P)")
     assert tag == "QM Psi4 Initial Opt. Energy (Har) mp2/def2-SV(P)"
     tag = define_tag("QM spe", "Psi4", "mp2", "def2-SV(P)")
-    assert tag == "QM Psi4 Single Pt. Energy (Har) mp2/def2-SV(P)"
+    assert tag == "QM Psi4 Final Single Pt. Energy (Har) mp2/def2-SV(P)"
     tag = define_tag("QM spe scs", "Psi4", "mp2", "def2-SV(P)")
-    assert tag == "QM Psi4 Single Pt. Energy (Har) SCS-mp2/def2-SV(P)"
+    assert tag == "QM Psi4 Final Single Pt. Energy (Har) SCS-mp2/def2-SV(P)"
     tag = define_tag("MM opt energy", None, None, None)
     assert tag == "MM Szybki SD Energy"
     tag = define_tag("original index", None, None, None)
