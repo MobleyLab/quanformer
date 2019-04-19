@@ -20,4 +20,5 @@ Last updated: Dec 19 2018
 | `steric_clash.smi`             | `initialize_confs.py`| `/DFS-L/old_beegfs_data/mobley/limvt/openforcefield/pipeline/set1_01_main/set1_01_main.smi`  |
 | `two_alkanes.smi`              | multiple             | examples directory                                                                           |
 | `two_alkanes.sdf`              | multiple             | examples directory                                                                           |
+| `eight_mols.sdf`               | `reader.py`          | `/DFS-L/old_beegfs_data/mobley/limvt/openforcefield/pipeline/set2_02_compareOPT1/OPT-11/conf1_nes28-210.sdf` |
 
