@@ -28,7 +28,7 @@ def define_tag(datum, package, method, basisset):
             package, method, basisset),
         "QM spe": "QM {} Final Single Pt. Energy (Har) {}/{}".format(
             package, method, basisset),
-        "QM spe scs": "QM {} Single Pt. Energy (Har) SCS-{}/{}".format(
+        "QM spe scs": "QM {} Final Single Pt. Energy (Har) SCS-{}/{}".format(
             package, method, basisset),
         "MM opt energy": "MM Szybki SD Energy",
         "original index": "Original omega conformer number",
