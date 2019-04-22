@@ -286,24 +286,34 @@ def remove_dead_conformers(enelist, idxlist, nanlist):
     return idxlist.T, enelist.T
 
 
-def relative_energies(enelist):
+def relative_energies(enelist, method):
+    """
     # enelist[i][j] is for file i, mol j
+    method : string
+        either 'subtract' or 'divide' to take all values of mol
+        and subtract by first conf or divide by first conf
+    """
 
     rel_enes = []
     for i, file_ene in enumerate(enelist):
         rel_enes.append([])
         for mol_ene in file_ene:
-            rel = mol_ene - mol_ene[0]
+            if method == 'subtract':
+                rel = mol_ene - mol_ene[0]
+            elif method == 'divide':
+                rel = mol_ene/mol_ene[0]
             rel_enes[i].append(rel)
     return rel_enes
 
 
 def avg_coeffvar(enelist):
     """
-    For the ABSOLUTE energies of a single conformer, compute coefficient of
-    variation (CV) across methods. Then average the CVs across all conformers
-    for each molecule.
+    For the ABSOLUTE energies of a single conformer, compute
+        coefficient of variation (CV) across methods, then
+        average the CVs across all conformers for each molecule.
 
+    Note: Input energies can be raw energies, or scaled energies (such that
+        energies are still on ratio scale).
     Note: It is incorrect to compute the coefficient of variation on relative
         values. See wikipedia for an example on temperature.
     Note: The units of the input shouldn't matter since the CV is a ratio,
@@ -359,6 +369,9 @@ def avg_coeffvar(enelist):
             with np.errstate(divide='ignore', invalid='ignore'):
                 cv = np.std(confs_ene) / np.average(confs_ene)
             cvlist.append(cv)
+
+        # remove first conf from avg calc bc energies scaled by first conf
+        cvlist.pop(0)
 
         # average the coeffs of variation
         spread_by_mol.append(np.average(cvlist))
@@ -674,29 +687,34 @@ def survey_energies(wholedict, mol_slice=[], outfn='relene.dat'):
 
     print("Removing un-finished conformers and computing relative energies...")
     idxlist, enelist = remove_dead_conformers(enelist, idxlist, nanlist)
-    relenelist = relative_energies(enelist)
+
+    # scale energies: scale energies by subtracting or dividing conf_j
+    # by conf_1 for all mols for all files
+    # (1) subtract first conf, or (2) divide first conf
+    rel_enelist = relative_energies(enelist, 'subtract')
+    rat_enelist = relative_energies(enelist, 'divide')
+
     for i in range(num_files):
-        wholedict[i]['compared_enes'] = relenelist[i]
+        wholedict[i]['compared_enes'] = rel_enelist[i]
         wholedict[i]['confNums'] = idxlist[i]
 
     # check that entire array is not zero, if ALL mols have one conf
-    all_zeros = np.all(np.asarray(relenelist)==0)
+    all_zeros = np.all(np.asarray(rel_enelist)==0)
     if all_zeros:
         print("WARNING: All relative energy values are zero. "
             "Cannot calculate energy spread.")
-        spreadlist = [-1]*len(relenelist[0])
+        spreadlist = [-1]*len(rel_enelist[0])
     else:
-        # estimate spread of data on ABSOLUTE energies
-        spreadlist, cvlist_all_mols = avg_coeffvar(enelist)
-        #spreadlist = normalized_deviation(relenelist)
-
+        # estimate spread of data on energies
+        spreadlist, cvlist_all_mols = avg_coeffvar(rat_enelist)
+        #spreadlist = normalized_deviation(rel_enelist)
 
     # loop over each mol and write energies from wholedict by column
     for m in range(len(wholedict[1]['titleMols'])):
         compF.write('\n\n# Mol ' + wholedict[1]['titleMols'][m])
 
         # for this mol, write the rmsd from each file side by side
-        line = ' {:.2f}% averaged CV'.format(spreadlist[m]*100)
+        line = ' {:.2f} ppm averaged CV'.format(spreadlist[m]*1000000)
         compF.write(line)
         compF.write('\n# ==================================================================')
         compF.write(f'\n# rel enes (kcal/mol), column i = file i, row j = conformer j')
@@ -707,9 +725,9 @@ def survey_energies(wholedict, mol_slice=[], outfn='relene.dat'):
             for i in range(num_files):
                 line += '{:.4f}\t'.format(wholedict[i]['compared_enes'][m][c])
 
-            # print overall contribution to spread
-            line += '# {:.2f}% CV'.format(cvlist_all_mols[m][c]*100)
-
+            # print overall contribution to spread, skip first conf since scaled
+            if c != 0:
+                line += '# {:.2f} ppm CV'.format(cvlist_all_mols[m][c-1]*1000000)
             compF.write(line)
 
     compF.close()

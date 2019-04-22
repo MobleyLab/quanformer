@@ -21,6 +21,7 @@ mpl.use("Agg")  # for Mac OS X error of NSInvalidArgumentException on Travis CI
 # -----------------------
 
 # TODO ADD FILE CHECKS!!
+# TODO CHECK avg_coeffvar function!!
 
 def test_survey_times():
     survey_confs(
