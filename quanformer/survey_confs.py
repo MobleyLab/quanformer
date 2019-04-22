@@ -25,11 +25,6 @@ import quanformer.proc_tags as pt
 import quanformer.reader as reader
 
 
-def separated_theory(theory):
-    qmethod = theory.split('/')[0].strip()
-    qbasis = theory.split('/')[1].strip()
-    return qmethod, qbasis
-
 
 def avg_mol_time(titles, infile, method, basis, tag, mol_slice=[]):
     """
@@ -241,7 +236,7 @@ def extract_enes(dict1, mol_slice=[]):
         mols = reader.read_mols(dict1['fname'])
 
     short_tag = dict1['tagkey']
-    qmethod, qbasis = separated_theory(dict1['theory'])
+    qmethod, qbasis = reader.separated_theory(dict1['theory'])
 
     titleMols = []
     confNums = []
@@ -746,7 +741,7 @@ def survey_times(wholedict, mol_slice=[]):
 
     # loop over each files and compute avg conformer times for all mols
     for i in wholedict:
-        qmethod, qbasis = separated_theory(wholedict[i]['theory'])
+        qmethod, qbasis = reader.separated_theory(wholedict[i]['theory'])
         qtag = wholedict[i]['tagkey']
         titles = avg_mol_time(titles, wholedict[i]['fname'], qmethod, qbasis, qtag, mol_slice)
 

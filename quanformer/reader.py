@@ -105,3 +105,9 @@ def read_text_input(infile, reffile=None, ref_index=None):
             linecount += 1
 
     return wholedict
+
+def separated_theory(theory):
+    qmethod = theory.split('/')[0].strip()
+    qbasis = theory.split('/')[1].strip()
+    return qmethod, qbasis
+
