@@ -142,6 +142,14 @@ def combine_files_plot(infile, figname='combined.png', molname=None, verbose=Fal
     xlabel='conformer'
     ylabel="energy"
 
+    # vtl print max range of relative energies
+    conf_then_file = np.array(yarray).T
+    ranges = []
+    for c in conf_then_file:
+        c_spread = max(c)-min(c)
+        ranges.append(c_spread)
+    print(f'mol {molname} max range: {max(ranges)}')
+
     ax.set_prop_cycle(plt.cycler('color', plt.cm.rainbow(np.linspace(0, 1, len(yarray)))))
     for i, (xs, ys) in enumerate(zip(xarray,yarray)):
         plt.plot(xs, ys, '-o', lw=0.8, label=labels[i])
