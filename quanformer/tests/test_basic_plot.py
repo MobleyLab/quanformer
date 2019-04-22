@@ -31,6 +31,7 @@ def test_basic_plot():
     os.remove('output_1.png')
 
 def test_combine_files_plot():
+    os.chdir(mydir)
     combine_files_plot(os.path.join(mydir, 'data_tests', 'survey_confs', 'stitch_ene.in'),
         molname='Div_6',
         verbose=True,
