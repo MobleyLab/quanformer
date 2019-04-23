@@ -114,6 +114,7 @@ def combine_files_plot(infile, figname='combined.png', molname=None, verbose=Fal
 
         if take_relative:
             data_array = data_array - data_array[0]
+            #data_array = data_array/data_array[0]
         if har_to_kcal:
             data_array = 627.5095*data_array
 
