@@ -30,6 +30,8 @@ def define_tag(datum, package, method, basisset):
             package, method, basisset),
         "QM spe scs": "QM {} Final Single Pt. Energy (Har) SCS-{}/{}".format(
             package, method, basisset),
+        "QM spe scs old": "QM {} Final SCS-Single Pt. Energy (Har) {}/{}".format( ## old version of sd tag
+            package, method, basisset),
         "MM opt energy": "MM Szybki SD Energy",
         "original index": "Original omega conformer number",
         "opt runtime": "QM {} Opt. Runtime (sec) {}/{}".format(
@@ -145,7 +147,7 @@ def set_sd_tags(Conf, Props, calctype):
 
     # Set new SD tag for final SCS-MP2 energy if method is MP2
     if method.lower() == 'mp2':
-        taglabel = "QM {} Final SCS-{} Energy (Har) {}".format(
+        taglabel = "QM {} Final {} Energy (Har) SCS-{}".format(
             pkg, cdict[calctype], full_method)
         oechem.OEAddSDData(Conf, taglabel, str(Props['finalSCSEnergy']))
 
