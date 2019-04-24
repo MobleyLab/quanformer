@@ -5,13 +5,10 @@ survey_conformers.py
 Purpose:    Compare energies and calculation times of the same molecule set
             across different QM methods.
 
-Version:    Apr 8 2019
+Version:    Apr 24 2019
 By:         Victoria T. Lim
 
 """
-
-## TODO: Histogram the deviations of relative energies.
-## TODO: Add line plotting functionality for specified molecules.
 
 import os
 import numpy as np
@@ -286,12 +283,28 @@ def remove_dead_conformers(enelist, idxlist, nanlist):
     return idxlist.T, enelist.T
 
 
-def relative_energies(enelist, method):
+def relative_energies(enelist, method, ref_conf_int=0):
     """
-    # enelist[i][j] is for file i, mol j
+    Compute relative energies by either subtracting or dividing
+        by a reference conformer's energy value. This energy value
+        is different for every mol in every file.
+
+    Parameters
+    ----------
+    enelist : list of lists
+        enelist[i][j] is the energy for file i, mol j
     method : string
         either 'subtract' or 'divide' to take all values of mol
         and subtract by first conf or divide by first conf
+    ref_conf_int : integer
+        0-based index of the integer for which to use as reference
+        for taking relative energies
+
+    Returns
+    --------
+    rel_enes : list of lists
+        same structure as input enelist but with relative energies
+
     """
 
     rel_enes = []
@@ -299,14 +312,14 @@ def relative_energies(enelist, method):
         rel_enes.append([])
         for mol_ene in file_ene:
             if method == 'subtract':
-                rel = mol_ene - mol_ene[0]
+                rel = mol_ene - mol_ene[ref_conf_int]
             elif method == 'divide':
-                rel = mol_ene/mol_ene[0]
+                rel = mol_ene/mol_ene[ref_conf_int]
             rel_enes[i].append(rel)
     return rel_enes
 
 
-def avg_coeffvar(enelist):
+def avg_coeffvar(enelist, ref_conf_int=0):
     """
     For the ABSOLUTE energies of a single conformer, compute
         coefficient of variation (CV) across methods, then
@@ -370,8 +383,8 @@ def avg_coeffvar(enelist):
                 cv = np.std(confs_ene) / np.average(confs_ene)
             cvlist.append(cv)
 
-        # remove first conf from avg calc bc energies scaled by first conf
-        cvlist.pop(0)
+        # remove ref conf from avg calc bc energies scaled by this conf
+        cvlist.pop(ref_conf_int)
 
         # average the coeffs of variation
         spread_by_mol.append(np.average(cvlist))
@@ -612,7 +625,7 @@ def survey_energies_ref(wholedict, ref_index, mol_slice=[], outfn='relene-rmsd.d
     return wholedict
 
 
-def survey_energies(wholedict, mol_slice=[], outfn='relene.dat'):
+def survey_energies(wholedict, mol_slice=[], outfn='relene.dat', ref_conf=0):
     """
     Compute the spread of the conformer energies for each molecule in each file.
     The spread can be computed as the coefficient of variation of all methods,
@@ -689,10 +702,12 @@ def survey_energies(wholedict, mol_slice=[], outfn='relene.dat'):
     idxlist, enelist = remove_dead_conformers(enelist, idxlist, nanlist)
 
     # scale energies: scale energies by subtracting or dividing conf_j
-    # by conf_1 for all mols for all files
+    # by conf_i for all j confs in all mols for all files
     # (1) subtract first conf, or (2) divide first conf
-    rel_enelist = relative_energies(enelist, 'subtract')
-    rat_enelist = relative_energies(enelist, 'divide')
+    if isinstance(ref_conf, int):
+        ref_conf_int = ref_conf
+    rel_enelist = relative_energies(enelist, 'subtract', ref_conf_int)
+    rat_enelist = relative_energies(enelist, 'divide', ref_conf_int)
 
     for i in range(num_files):
         wholedict[i]['compared_enes'] = rel_enelist[i]
@@ -706,7 +721,7 @@ def survey_energies(wholedict, mol_slice=[], outfn='relene.dat'):
         spreadlist = [-1]*len(rel_enelist[0])
     else:
         # estimate spread of data on energies
-        spreadlist, cvlist_all_mols = avg_coeffvar(rat_enelist)
+        spreadlist, cvlist_all_mols = avg_coeffvar(rat_enelist, ref_conf_int)
         #spreadlist = normalized_deviation(rel_enelist)
 
     # loop over each mol and write energies from wholedict by column
@@ -720,13 +735,17 @@ def survey_energies(wholedict, mol_slice=[], outfn='relene.dat'):
         compF.write(f'\n# rel enes (kcal/mol), column i = file i, row j = conformer j')
 
         # for this mol, write the compared_enes from each file by columns
-        for c in range(len(wholedict[1]['confNums'][m])):
-            line = '\n' + str(wholedict[1]['confNums'][m][c]) + '\t'
+        this_mol_conf_inds = wholedict[1]['confNums'][m]
+        for c in range(len(this_mol_conf_inds)):
+            line = '\n' + str(this_mol_conf_inds[c]) + '\t'
             for i in range(num_files):
                 line += '{:.4f}\t'.format(wholedict[i]['compared_enes'][m][c])
 
-            # print overall contribution to spread, skip first conf since scaled
-            if c != 0:
+            # print overall contribution to spread, skip ref conf since scaled
+            # include second condition in case ref_conf_int is negative
+            if c == ref_conf_int or c == len(this_mol_conf_inds)+ref_conf_int:
+                line += '#  nan ppm CV'
+            else:
                 line += '# {:.2f} ppm CV'.format(cvlist_all_mols[m][c-1]*1000000)
             compF.write(line)
 
