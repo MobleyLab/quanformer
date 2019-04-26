@@ -107,13 +107,19 @@ def make_psi_input(mol, label, method, basisset, calctype='opt', mem=None):
         elif basisset.lower() != 'def2-qzvpd':  # no aux set for qzvpd 10-6-18
             inputstring += ('\nset df_basis_mp2 %s-ri' % (basisset))
 
-    inputstring += ('\n\nset basis %s' % (basisset))
+    # check for None or empty string such as in case of psi4 cbs energy
+    if basisset:
+        inputstring += ('\n\nset basis %s' % (basisset))
+
     inputstring += ('\nset freeze_core True')
     # specify command for type of calculation
     if calctype == 'opt':
         inputstring += ('\noptimize(\'%s\')\n\n' % (method))
     elif calctype == 'spe':
-        inputstring += ('\nenergy(\'%s\')\n\n' % (method))
+        if method[:3] == 'cbs':
+            inputstring += ('\nenergy(%s)\n\n' % (method))
+        else:
+            inputstring += ('\nenergy(\'%s\')\n\n' % (method))
     elif calctype == 'hess':
         inputstring += (
             '\nH, wfn = hessian(\'%s\', return_wfn=True)\nwfn.hessian().print_out()\n\n'
