@@ -24,8 +24,16 @@ def test_convert_extension():
     assert os.path.getsize(os.path.join(mydir, 'data_tests', 'carbon-222.mol2')) == 1320
     os.remove(os.path.join(mydir, 'data_tests', 'carbon-222.mol2'))
 
+def test_convert_extension_canonical():
+    convert_extension(
+        os.path.join(mydir, 'data_tests', 'carbon-222.sdf'),
+        os.path.join(mydir, 'data_tests', 'carbon-222.mol2'),
+        canonical=True)
+    assert os.path.getsize(os.path.join(mydir, 'data_tests', 'carbon-222.mol2')) == 1321
+    os.remove(os.path.join(mydir, 'data_tests', 'carbon-222.mol2'))
+
 # test manually without pytest
 if 0:
     sys.path.insert(0, '/home/limvt/Documents/quanformer/quanformer')
     from utils import *
-    test_convert_extension()
+    test_convert_extension_canonical()
