@@ -1,6 +1,8 @@
 name: test
 channels:
+  - defaults
   - openeye
+  - conda-forge
 dependencies:
     # Base depends
   - python
@@ -10,6 +12,11 @@ dependencies:
   - numpy
   - matplotlib
   - scipy
+
+    # QCFractal testing
+  - qcfractal
+  - rdkit
+  - geometric
 
     # Testing
   - pytest
