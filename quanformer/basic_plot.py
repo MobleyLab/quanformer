@@ -55,8 +55,8 @@ def basic_plot(infile, tag, style, molname=None, take_relative=False, har_to_kca
 
         # exclude conformers for which job did not finish (nan)
         nanIndices = np.argwhere(np.isnan(data_array))
-        for i in reversed(nanIndices):  # loop in reverse to delete correctly
-            data_array = np.delete(data_array, i)
+        for j in reversed(nanIndices):  # loop in reverse to delete correctly
+            data_array = np.delete(data_array, j)
 
         if take_relative:
             data_array = data_array - np.amin(data_array)

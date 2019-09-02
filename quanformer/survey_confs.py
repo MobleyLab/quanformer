@@ -14,9 +14,7 @@ import os
 import numpy as np
 import operator as o
 from scipy import stats
-
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
 
 import quanformer.proc_tags as pt
 import quanformer.reader as reader

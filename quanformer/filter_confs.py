@@ -15,7 +15,6 @@ By: Victoria T. Lim
 
 
 import os
-import warnings
 
 import openeye.oechem as oechem
 import quanformer.reader as reader
