@@ -16,7 +16,7 @@ from helper import *
 from quanformer.survey_confs import *
 
 import matplotlib as mpl
-mpl.use("Agg")  # for Mac OS X error of NSInvalidArgumentException on Travis CI
+#mpl.use("Agg")  # for Mac OS X error of NSInvalidArgumentException on Travis CI
 
 # -----------------------
 
@@ -54,7 +54,7 @@ def test_survey_energies():
         ref_index=None,
         plot_enes=False
     )
-    os.remove('relene.dat')
+    #os.remove('relene.dat')
 
 def test_survey_energies_reference():
     survey_confs(
@@ -80,7 +80,12 @@ def test_survey_energies_plot():
 
 
 # test manually without pytest
-if 0:
+if 1:
     sys.path.insert(0, '/home/limvt/Documents/quanformer/quanformer')
+    sys.path.insert(0, '/home/limvt/Documents/quanformer/quan_mobley/quanformer')
     from survey_confs import *
     test_survey_times()
+    test_survey_times_wrongtag()
+    test_survey_energies()
+    test_survey_energies_reference()
+    test_survey_energies_plot()
