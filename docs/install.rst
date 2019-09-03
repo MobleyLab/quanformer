@@ -8,7 +8,7 @@ Anaconda
 
 2. Create a conda environment for **quanformer**::
 
-    conda create --name quanformer python=3.6
+    conda create --name quanformer python=3.6 matplotlib scipy
     conda activate quanformer
 
 3. Obtain dependencies for Psi4 (including DFTD3 and gCP) and OpenEye::
