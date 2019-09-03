@@ -534,7 +534,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     opt = vars(args)
     if not os.path.exists(opt['input']):
-        raise parser.error("Input file %s does not exist." % opt['filename'])
+        parser.error("Input file %s does not exist." % opt['filename'])
     sys.stdout.flush()
 
     # Read input file and store each file's information in two lists.
@@ -560,7 +560,7 @@ if __name__ == "__main__":
             # All elements are True. Therefore all the files exist. Run %run commands
             break
         else:
-            raise parser.error("One or more input files are missing!!")
+            parser.error("One or more input files are missing!!")
 
     # run the workhorse, unless reading in from pickle file
     if not opt['readpickle']:
