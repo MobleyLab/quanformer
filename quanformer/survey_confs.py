@@ -882,7 +882,7 @@ def survey_confs(infile, analyze_energies=False, analyze_times=False, ref_index=
 
     if analyze_energies:
         if ref_index is None:
-            wholedict = survey_energies(wholedict, mol_slice)
+            survey_energies(wholedict, mol_slice)
         else:
             wholedict = survey_energies_ref(wholedict, ref_index, mol_slice)
             # TODO move this part inside the survey_energies fx
