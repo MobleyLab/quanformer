@@ -328,7 +328,7 @@ def normalize(x):
     return (x - x.min()) / np.ptp(x)
 
 
-def something(enelist):
+def something(enelist, moltitles):
 
 
     print(enelist)
@@ -340,46 +340,62 @@ def something(enelist):
     num_mols = enelist.shape[1]
 
     for i in range(num_mols):
+        molname = moltitles[i]
 
         enes_mol_i = [enelist[j][i] for j in range(num_files)]
 
         # check that at least two conformers exist
-        min_num_confs = min([enes_mol_i[k].shape[0] for k in range(num_files)])
-        max_num_confs = max([enes_mol_i[k].shape[0] for k in range(num_files)])
+        all_num_confs = [enes_mol_i[k].shape[0] for k in range(num_files)]
+        min_num_confs = min(all_num_confs)
+        max_num_confs = max(all_num_confs)
+        print(all_num_confs)
         if min_num_confs <= 1:
             print(f"skipping molecule {i} since only 0 or 1 conformer")
-            #spread_by_mol.append(np.nan)
-            #cvlist_all_mols.append(num_confs*[np.nan])
+#            spread_by_mol.append(np.nan)
+#            cvlist_all_mols.append(num_confs*[np.nan])
             continue
+
+        # for reference plot histograms of each file for this mol
+        fig = plt.figure()
+        for k, v in enumerate(range(num_files)):
+            v = v+1
+            ax1 = fig.add_subplot(num_files, 1, v)
+            ax1.hist(enes_mol_i[k])
+        plt.show()
 
         # estimate density of conformer energies of mol_i for each file/method
         kdes_mol_i = [kde(normalize(enes_mol_i[j])) for j in range(num_files)]
         # define x-values for which to get value at kde's
         x = np.linspace(0, 1, 1000)
 
+        # compute area under the curve as sanity check
+        areas = [kdes_mol_i[j].integrate_box_1d(0, 1) for j in range(num_files)]
+        print(areas)
+
+
         # plot normalized densities of conformer energies for diff methods
         plt.figure()
         for j in range(num_files):
             plt.plot(x, kdes_mol_i[j](x), label=f'file {j}')
-        plt.title('kernel density estimates')
+        plt.title(f'{molname} kernel density estimates')
         plt.legend(loc=3)
         plt.show()
 
-        # compute all-by-all relative entropy calculation
-        # higher value means the two densities are more different
-        kl_matrix = []
-        for a in range(len(kdes_mol_i)):
-          kl_list = []
-          for b in range(len(kdes_mol_i)):
-            kl = stats.entropy(kdes_mol_i[a](x), kdes_mol_i[b](x))
-            kl_list.append(kl)
-          kl_matrix.append(kl_list)
-
-        # plot all-by-all relative entropies
-        plt.figure()
-        plt.imshow(kl_matrix, cmap='hot_r', interpolation='nearest', origin='lower')
-        plt.colorbar()
-        plt.savefig(f'kullback_mol{i}.png')
+#        # compute all-by-all relative entropy calculation
+#        # higher value means the two densities are more different
+#        kl_matrix = []
+#        for a in range(len(kdes_mol_i)):
+#          kl_list = []
+#          for b in range(len(kdes_mol_i)):
+#            kl = stats.entropy(kdes_mol_i[a](x), kdes_mol_i[b](x))
+#            kl_list.append(kl)
+#          kl_matrix.append(kl_list)
+#
+#        # plot all-by-all relative entropies
+#        plt.figure()
+#        plt.imshow(kl_matrix, cmap='hot_r', interpolation='nearest', origin='lower')
+#        plt.colorbar()
+#        plt.savefig(f'kullback_mol{i}.png')
 
 
 def rmsd_two_files(dict1, dict2, mol_slice=[]):
@@ -647,7 +663,7 @@ def survey_energies(wholedict, mol_slice=[], outfn='relene.dat', ref_conf=0):
         wholedict[i]['compared_enes'] = enelist[i]
         wholedict[i]['confNums'] = idxlist[i]
 
-    _ = something(enelist)
+    _ = something(enelist, wholedict[0]['titleMols'])
 
 #    # loop over each mol and write energies from wholedict by column
 #    for m in range(len(wholedict[1]['titleMols'])):
