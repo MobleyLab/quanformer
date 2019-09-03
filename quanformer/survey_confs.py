@@ -354,20 +354,33 @@ def something(enelist):
 
         # estimate density of conformer energies of mol_i for each file/method
         kdes_mol_i = [kde(normalize(enes_mol_i[j])) for j in range(num_files)]
+        # define x-values for which to get value at kde's
+        x = np.linspace(0, 1, 1000)
 
+        # plot normalized densities of conformer energies for diff methods
         plt.figure()
-
         for j in range(num_files):
-
-            # define x-values for which to get value at kde's
-            #x = np.linspace(np.min(enes_mol_i[j]), np.max(enes_mol_i[j]), 1000)
-            x = np.linspace(0, 1, 1000)
-            plt.plot(x, kdes_mol_i[j](x), label=j)
-
-        plt.title('kdes')
+            plt.plot(x, kdes_mol_i[j](x), label=f'file {j}')
+        plt.title('kernel density estimates')
         plt.legend(loc=3)
-
         plt.show()
+
+        # compute all-by-all relative entropy calculation
+        # higher value means the two densities are more different
+        kl_matrix = []
+        for a in range(len(kdes_mol_i)):
+          kl_list = []
+          for b in range(len(kdes_mol_i)):
+            kl = stats.entropy(kdes_mol_i[a](x), kdes_mol_i[b](x))
+            kl_list.append(kl)
+          kl_matrix.append(kl_list)
+
+        # plot all-by-all relative entropies
+        plt.figure()
+        plt.imshow(kl_matrix, cmap='hot_r', interpolation='nearest', origin='lower')
+        plt.colorbar()
+        plt.savefig(f'kullback_mol{i}.png')
+
 
 def rmsd_two_files(dict1, dict2, mol_slice=[]):
     """
