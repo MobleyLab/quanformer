@@ -348,7 +348,7 @@ def something(enelist, moltitles):
         all_num_confs = [enes_mol_i[k].shape[0] for k in range(num_files)]
         min_num_confs = min(all_num_confs)
         max_num_confs = max(all_num_confs)
-        print(all_num_confs)
+        print(f"{molname} number of conformers: {all_num_confs}")
         if min_num_confs <= 1:
             print(f"skipping molecule {i} since only 0 or 1 conformer")
 #            spread_by_mol.append(np.nan)
@@ -366,19 +366,24 @@ def something(enelist, moltitles):
         # estimate density of conformer energies of mol_i for each file/method
         kdes_mol_i = [kde(normalize(enes_mol_i[j])) for j in range(num_files)]
         # define x-values for which to get value at kde's
-        x = np.linspace(0, 1, 1000)
+        x = np.linspace(-2, 3, 1000)
 
         # compute area under the curve as sanity check
-        areas = [kdes_mol_i[j].integrate_box_1d(0, 1) for j in range(num_files)]
-        print(areas)
-
+        areas = [kdes_mol_i[j].integrate_box_1d(-2, 3) for j in range(num_files)]
+        print(f"{molname} area under kdes: {areas}")
 
         # plot normalized densities of conformer energies for diff methods
         plt.figure()
+        plt.subplot(2, 1, 1)
         for j in range(num_files):
             plt.plot(x, kdes_mol_i[j](x), label=f'file {j}')
         plt.title(f'{molname} kernel density estimates')
-        plt.legend(loc=3)
+        plt.legend(loc=2)
+
+        plt.subplot(2, 1, 2)
+        x2 = np.linspace(0, 1, 1000)
+        for j in range(num_files):
+            plt.plot(x2, kdes_mol_i[j](x2), label=f'file {j}')
         plt.show()
 
 #        # compute all-by-all relative entropy calculation
