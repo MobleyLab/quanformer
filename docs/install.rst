@@ -11,10 +11,10 @@ Anaconda
     conda create --name quanformer python=3.6 matplotlib scipy
     conda activate quanformer
 
-3. Obtain dependencies for Psi4 (including DFTD3 and gCP) and OpenEye::
+3. Obtain OpenEye, Psi4, and Psi4 dependencies::
 
-    conda install -c psi4 psi4 dftd3 gcp
     conda install -c openeye openeye-toolkits
+    conda install -c psi4 psi4 dftd3 gcp [gpu_dfcc]
 
 4. Check installations.
 
