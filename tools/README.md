@@ -16,6 +16,8 @@ Other helpful tools:
 
 
 ## TO BE TRANSFERRED
+From repo's [old location](https://github.com/vtlim/off_psi4/tree/master/tools).
+
 | Script                | Description                                                                            |
 | ----------------------|----------------------------------------------------------------------------------------|
 | `align_two_mols.py`   | read in a molecule from two distinct files and match their atom indices                |
