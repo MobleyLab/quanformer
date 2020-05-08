@@ -20,6 +20,8 @@ Eventually this will be transfered over to the [documentation website](https://q
 
 * A basic example of how to use quanformer is shown [here](https://quanformer.readthedocs.io/en/latest/examples.html).
 
+* NOTE: The statistical analysis in `survey_confs.py` is purely exploratory and we do not make any claims as to its accuracy or rigor.
+
 
 ### Developer notes
 
