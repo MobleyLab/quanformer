@@ -309,10 +309,17 @@ def relative_energies(enelist, method, ref_conf_int=0):
     for i, file_ene in enumerate(enelist):
         rel_enes.append([])
         for mol_ene in file_ene:
-            if method == 'subtract':
-                rel = mol_ene - mol_ene[ref_conf_int]
-            elif method == 'divide':
-                rel = mol_ene/mol_ene[ref_conf_int]
+            try:
+                if method == 'subtract':
+                    rel = mol_ene - mol_ene[ref_conf_int]
+                elif method == 'divide':
+                    rel = mol_ene/mol_ene[ref_conf_int]
+
+            # for when ref_conf_int == 'all' which may call
+            # estimate_variability(r) for r higher than nconfs
+            except IndexError:
+                #print('blank list at {} for ref {}'.format(i, ref_conf_int))
+                rel = []
             rel_enes[i].append(rel)
     return rel_enes
 
@@ -363,7 +370,8 @@ def avg_coeffvar(enelist, ref_conf_int=0):
         cvlist = []
 
         # check that at least two conformers exist
-        num_confs = mols_ene[0].shape[0]
+        # call np.array in case empty list is inside from relative_energies
+        num_confs = np.array(mols_ene[0]).shape[0]
         if num_confs <= 1:
             print(f"skipping molecule {i} since only 0 or 1 conformer")
             spread_by_mol.append(np.nan)
@@ -623,7 +631,7 @@ def survey_energies_ref(wholedict, ref_index, mol_slice=[], outfn='relene-rmsd.d
     return wholedict
 
 
-def survey_energies(wholedict, mol_slice=[], outfn='relene.dat', ref_conf=0):
+def survey_energies(wholedict, mol_slice=[], outfn='relene.dat', ref_conf='all'):
     """
     Compute the spread of the conformer energies for each molecule in each file.
     The spread can be computed as the coefficient of variation of all methods,
@@ -675,7 +683,7 @@ def survey_energies(wholedict, mol_slice=[], outfn='relene.dat', ref_conf=0):
         nanlist.append(confNans)
         wholedict[i]['titleMols'] = titleMols
 
-    print("Removing mols missing from 1+ files...")
+    print("  Removing any mols missing from 1+ files...")
     # find molecules common in all files
     molname_sets = [set(wholedict[x]['titleMols']) for x in range(num_files)]
     molname_common = set.intersection(*molname_sets)
@@ -695,59 +703,112 @@ def survey_energies(wholedict, mol_slice=[], outfn='relene.dat', ref_conf=0):
             del enelist[i][index]
             del idxlist[i][index]
             del nanlist[i][index]
+        wholedict[i]['confNums'] = idxlist[i]
 
-    print("Removing un-finished conformers and computing relative energies...")
+    print("  Removing any unfinished conformers and computing relative energies...")
     idxlist, enelist = remove_dead_conformers(enelist, idxlist, nanlist)
+
+    def estimate_variability(ref_conf_int):
+
+        rel_enelist = relative_energies(enelist, 'subtract', ref_conf_int)
+        rat_enelist = relative_energies(enelist, 'divide', ref_conf_int)
+        for i in range(num_files):
+            wholedict[i]['compared_enes'] = rel_enelist[i]
+
+        # check that entire array is not zero, if ALL mols have one conf
+        all_zeros = np.all(np.asarray(rel_enelist)==0)
+        if all_zeros:
+            print("WARNING: All relative energy values are zero. "
+                "Cannot calculate energy spread.")
+            spreadlist = [-1]*len(rel_enelist[0])
+        else:
+            # estimate spread of data on energies
+            spreadlist, cvlist_all_mols = avg_coeffvar(rat_enelist, ref_conf_int)
+            #spreadlist = normalized_deviation(rel_enelist)
+
+        return spreadlist, cvlist_all_mols
 
     # scale energies: scale energies by subtracting or dividing conf_j
     # by conf_i for all j confs in all mols for all files
     # (1) subtract first conf, or (2) divide first conf
     if isinstance(ref_conf, int):
-        ref_conf_int = ref_conf
-    rel_enelist = relative_energies(enelist, 'subtract', ref_conf_int)
-    rat_enelist = relative_energies(enelist, 'divide', ref_conf_int)
+        spreadlist, cvlist_all_mols = estimate_variability(ref_conf)
 
-    for i in range(num_files):
-        wholedict[i]['compared_enes'] = rel_enelist[i]
-        wholedict[i]['confNums'] = idxlist[i]
+        # loop over each mol and write energies from wholedict by column
+        for m in range(len(wholedict[1]['titleMols'])):
+            compF.write('\n\n# Mol ' + wholedict[1]['titleMols'][m])
+            this_mol_conf_inds = wholedict[1]['confNums'][m]
 
-    # check that entire array is not zero, if ALL mols have one conf
-    all_zeros = np.all(np.asarray(rel_enelist)==0)
-    if all_zeros:
-        print("WARNING: All relative energy values are zero. "
-            "Cannot calculate energy spread.")
-        spreadlist = [-1]*len(rel_enelist[0])
-    else:
-        # estimate spread of data on energies
-        spreadlist, cvlist_all_mols = avg_coeffvar(rat_enelist, ref_conf_int)
-        #spreadlist = normalized_deviation(rel_enelist)
+            # for this mol, write spread from all files
+            compF.write(' {:.2f} ppm averaged CV'.format(spreadlist[m]*1000000))
+            compF.write('\n# ==================================================================')
+            compF.write(f'\n# rel enes (kcal/mol), column i = file i, row j = conformer j')
 
-    # loop over each mol and write energies from wholedict by column
-    for m in range(len(wholedict[1]['titleMols'])):
-        compF.write('\n\n# Mol ' + wholedict[1]['titleMols'][m])
+            # for this mol, write compared_enes from each file by columns
+            for c in range(len(this_mol_conf_inds)):
+                line = '\n' + str(this_mol_conf_inds[c]) + '\t'
+                for i in range(num_files):
+                    line += '{:.4f}\t'.format(wholedict[i]['compared_enes'][m][c])
 
-        # for this mol, write the rmsd from each file side by side
-        line = ' {:.2f} ppm averaged CV'.format(spreadlist[m]*1000000)
-        compF.write(line)
-        compF.write('\n# ==================================================================')
-        compF.write(f'\n# rel enes (kcal/mol), column i = file i, row j = conformer j')
+                # print overall contribution to spread, skip ref conf since scaled
+                # include second condition in case ref_conf_int is negative
+                if c == ref_conf or c == len(this_mol_conf_inds)+ref_conf:
+                    line += '#  nan ppm CV'
+                else:
+                    line += '# {:.2f} ppm CV'.format(cvlist_all_mols[m][c-1]*1000000)
+                compF.write(line)
 
-        # for this mol, write the compared_enes from each file by columns
-        this_mol_conf_inds = wholedict[1]['confNums'][m]
-        for c in range(len(this_mol_conf_inds)):
-            line = '\n' + str(this_mol_conf_inds[c]) + '\t'
-            for i in range(num_files):
-                line += '{:.4f}\t'.format(wholedict[i]['compared_enes'][m][c])
+    elif ref_conf == 'all':
 
-            # print overall contribution to spread, skip ref conf since scaled
-            # include second condition in case ref_conf_int is negative
-            if c == ref_conf_int or c == len(this_mol_conf_inds)+ref_conf_int:
-                line += '#  nan ppm CV'
-            else:
-                line += '# {:.2f} ppm CV'.format(cvlist_all_mols[m][c-1]*1000000)
-            compF.write(line)
+        allref_spreadlist = [] # list[i][j] is ith ref conformer index, jth molecule
+        allref_allmol_fileconf = {}  # dict[i][j][k] is ith ref conformer index, jth molecule, kth conformer
 
-    compF.close()
+        highest_numconfs = max([len(l) for l in wholedict[1]['confNums']])
+        print('  The highest number of conformers is ', highest_numconfs)
+
+        for r in range(highest_numconfs):
+            print('  Comparing to reference conformer {}...'.format(r))
+            spreadlist, cvlist_all_mols = estimate_variability(r)
+            allref_spreadlist.append(spreadlist)
+            allref_allmol_fileconf[r] = cvlist_all_mols
+
+        allref_spreadlist = np.asarray(allref_spreadlist).T # array[i][j] is ith molecule, jth reference index
+
+        # loop over each mol and write energies from wholedict by column
+        for m in range(len(wholedict[1]['titleMols'])):
+
+            # write heading
+            compF.write('\n\n# Mol ' + wholedict[1]['titleMols'][m])
+            this_mol_conf_inds = wholedict[1]['confNums'][m]
+
+            # (average over all references) of (average over all conformers of some reference)
+            # only take up to how many conformers present since nan for ref_conf > num_confs
+            avg_avg = np.mean(allref_spreadlist[m][:len(this_mol_conf_inds)])
+            print('\n\n\n', allref_spreadlist[m], avg_avg)
+
+            # for this mol, write average of average
+            compF.write(' {:.4f} ppm averaged CV'.format(avg_avg*1000000))
+            compF.write('\n# ==================================================================')
+            compF.write('\n# \t' + '\t\t'.join(map(str, this_mol_conf_inds)))
+            compF.write('\n# ==================================================================')
+
+            # for this mol, write cv contribution from each reference by columns
+            for c in range(len(this_mol_conf_inds)):
+                line = '\n' + str(this_mol_conf_inds[c]) + '\t'
+                for cref in range(len(this_mol_conf_inds)):
+                    # diagonal is not applicable
+                    if cref==c:
+                        line += ' nan\t'
+                        continue
+                    line += '{:.4f}\t'.format(allref_allmol_fileconf[cref][m][c-1]*1000000)
+                compF.write(line)
+
+            # write (average over all conformers of some reference)
+            this_mol_avgs = allref_spreadlist[m][:len(this_mol_conf_inds)]
+            this_mol_avgs = ['{:.4f}'.format(flt*1000000) for flt in this_mol_avgs]
+            compF.write('\nav\t' + '\t'.join(this_mol_avgs))
+
+        compF.close()
 
     return wholedict
 
