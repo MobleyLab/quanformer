@@ -11,13 +11,29 @@ Quanformer
 
 Quanformer is a Python-based pipeline for generating conformers, preparing quantum mechanical (QM) calculations, and processing QM results for a set of molecules and their conformers.
 
+### Getting started
+
+* Read through `DETAILS.md`.
+Eventually this will be transfered over to the [documentation website](https://quanformer.readthedocs.io/en/latest/?badge=latest) for Quanformer.
+
+* Install Quanformer as a Python module. Find the installation instructions [here](https://quanformer.readthedocs.io/en/latest/install.html).
+
+* A basic example of how to use quanformer is shown [here](https://quanformer.readthedocs.io/en/latest/examples.html).
+
+
+### Developer notes
+
+See big picture to-do items in the issue tracker.
+The most immediate things are to transfer all information/details then to import the important tools/utility functions.
+
+
 ### Copyright
 
-Copyright (c) 2019, Victoria T. Lim  
+Copyright (c) 2020, Victoria T. Lim  
 This Github repository has an [old location here](https://github.com/vtlim/off_psi4).
 
 
 ### Acknowledgments
- 
-Project based on the 
-[Computational Molecular Science Python Cookiecutter](https://github.com/molssi/cookiecutter-cms) version 1.0
+
+This repository was based on the [Computational Molecular Science Python Cookiecutter](https://github.com/molssi/cookiecutter-cms) version 1.0.
+
